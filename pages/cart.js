@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Input from "@/components/Input";
 import Table from "@/components/Table";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import { useContext, useEffect, useState } from "react";
 import { styled } from "styled-components";
 
@@ -68,6 +69,8 @@ const CityHolder = styled.div`
 `;
 
 export default function CartPage() {
+    const session = useSession();
+
     const { cartProducts, addProduct, removeProduct, clearCart } = useContext(CartContext);
     const [products, setProducts] = useState([]);
     const [name, setName] = useState('');
@@ -83,9 +86,21 @@ export default function CartPage() {
             axios.post('/api/cart', { ids: cartProducts })
                 .then(response => {
                     setProducts(response.data);
+                    console.log("session", session);
+                    if (session && session.data?.user?.email) {
+                        console.log("email", session?.data?.user?.email);
+
+                        axios.get('/api/customers?email=' + session.data.user.email)
+                            .then(response => {
+                                setName(response.name);
+                                setStreetAddress(response.address);
+                            })
+                    }
                 })
         } else {
             setProducts([]);
+            setName("");
+            setStreetAddress("");
         }
     }, [cartProducts]);
 
@@ -96,7 +111,7 @@ export default function CartPage() {
         }
     }, []);
 
-    function alternativePayment(){
+    function alternativePayment() {
         clearCart();
         setIsSuccess(true);
     }

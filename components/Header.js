@@ -4,6 +4,7 @@ import Center from "./Center";
 import { useContext, useState } from "react";
 import { CartContext } from "./CartContext";
 import BarsIcon from "./icons/Bars";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const StyledHeader = styled.header`
     background-color: #222;  
@@ -63,19 +64,37 @@ const NavButton = styled.button`
 `;
 
 export default function Header() {
-    const {cartProducts} = useContext(CartContext);
+    const { data: session, status } = useSession();
+
+    const { cartProducts } = useContext(CartContext);
     const [mobileNavActive, setMobileNavActive] = useState(false);
     return (
         <StyledHeader >
             <Center>
                 <Wrapper>
                     <Logo href={'/'}>Ecommerce</Logo>
-                    <StyledNav mobileNavActive={mobileNavActive}> 
+                    <StyledNav mobileNavActive={mobileNavActive}>
                         <NavLink href={'/'}>Home</NavLink>
                         <NavLink href={'/products'}>All products</NavLink>
                         <NavLink href={'/categories'}>Categories</NavLink>
                         <NavLink href={'/account'}>Account</NavLink>
                         <NavLink href={'/cart'}>Cart ({cartProducts.length})</NavLink>
+                        {!session && (
+                            <NavLink href='/api/auth/signin'
+                                onClick={e => {
+                                    e.preventDefault();
+                                    signIn();
+                                }}>Sign in
+                            </NavLink>
+                        )}
+                        {session && (
+                            <NavLink href='/api/auth/signout'
+                                onClick={e => {
+                                    e.preventDefault();
+                                    signOut();
+                                }}>Sign out
+                            </NavLink>
+                        )}
                     </StyledNav>
                     <NavButton onClick={() => setMobileNavActive(prev => !prev)}>
                         <BarsIcon>
