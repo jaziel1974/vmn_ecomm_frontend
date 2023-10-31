@@ -23,6 +23,8 @@ const WhiteBox = styled(Link)`
         max-width: 100%;
         max-height: 80px;
     }
+    min-width: 140px
+
 `;
 
 const Title = styled(Link)`
@@ -61,7 +63,6 @@ const Price = styled.div`
 
 export default function ProductBox({ _id, title, description, price, images }) {
     const session = useSession();
-    console.log("session: ", JSON.stringify(session));
 
     const { addProduct } = useContext(CartContext);
     const url = '/product/' + _id;

@@ -86,9 +86,7 @@ export default function CartPage() {
             axios.post('/api/cart', { ids: cartProducts })
                 .then(response => {
                     setProducts(response.data);
-                    console.log("session", session);
                     if (session && session.data?.user?.email) {
-                        console.log("email", session?.data?.user?.email);
 
                         axios.get('/api/customers?email=' + session.data.user.email)
                             .then(response => {
