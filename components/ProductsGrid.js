@@ -52,7 +52,7 @@ export default function ProductsGrid({ products }) {
                     <input type="text"
                         ref={ref}
                         onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Search items... press /"
+                        placeholder="Procurar itens... pressione /"
                         value={search}>
                     </input>
                 </form>

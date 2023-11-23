@@ -8,6 +8,7 @@ import WhiteBox from "@/components/WhiteBox";
 import CartIcon from "@/components/icons/CartIcon";
 import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/Product";
+import { useSession } from "next-auth/react";
 import { useContext } from "react";
 import { styled } from "styled-components";
 
@@ -30,7 +31,8 @@ const Price = styled.span`
 `;
 
 export default function ProductPage({ product }) {
-    const {addProduct} = useContext(CartContext);
+    const session = useSession();
+    const { addProduct } = useContext(CartContext);
 
     return (
         <>
@@ -45,10 +47,12 @@ export default function ProductPage({ product }) {
                         <p>{product.description}</p>
                         <PriceRow>
                             <div>
-                                <Price>${product.price}</Price>
+                                {session && session.status.toString() === "authenticated" && (
+                                    <Price>${product.price}</Price>
+                                )}
                             </div>
                             <div>
-                                <Button primary={1} onClick={() => addProduct(product._id)}><CartIcon></CartIcon>Add to cart</Button>
+                                <Button primary={1} onClick={() => addProduct(product._id)}><CartIcon></CartIcon>Adicionar ao carrinho</Button>
                             </div>
                         </PriceRow>
                     </div>

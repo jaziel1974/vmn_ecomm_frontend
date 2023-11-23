@@ -169,17 +169,17 @@ export default function CartPage() {
             <Center>
                 <ColumnsWrapper>
                     <Box>
-                        <h2>Cart</h2>
+                        <h2>Carrinho</h2>
                         {!cartProducts?.length && (
-                            <div>Your cart is empty</div>
+                            <div>Carrinho vazio</div>
                         )}
                         {products.length > 0 && (
                             <Table>
                                 <thead>
                                     <tr>
-                                        <th>Product</th>
-                                        <th>Quantity</th>
-                                        <th>Price</th>
+                                        <th>Produto</th>
+                                        <th>Quantidade</th>
+                                        <th>Preço</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -202,13 +202,17 @@ export default function CartPage() {
                                                     +
                                                 </Button>
                                             </td>
-                                            <td>${cartProducts.filter(id => id === product._id).length * product.price}</td>
+                                            <td>
+                                                {session && session.status.toString() === "authenticated" && (
+                                                    cartProducts.filter(id => id === product._id).length * product.price
+                                                )}
+                                            </td>
                                         </tr>
                                     ))}
                                     <tr>
                                         <td></td>
                                         <td></td>
-                                        <td>${total}</td>
+                                        <td></td>
                                     </tr>
                                 </tbody>
                             </Table>
@@ -217,14 +221,16 @@ export default function CartPage() {
                     {!!cartProducts.length && (
                         <Box>
                             <h2>Order information</h2>
-                            <Input type="text" placeholder="Name" value={name} name="name" onChange={ev => setName(ev.target.value)} />
-                            <Input type="text" placeholder="Email" value={email} name="email" onChange={ev => setEmail(ev.target.value)} />
-                            <Input type="text" placeholder="City" value={city} name="city" onChange={ev => setCity(ev.target.value)} />
-                            <Input type="text" placeholder="Postal code" value={postalCode} name="postalCode" onChange={ev => setPostalCode(ev.target.value)} />
-                            <Input type="text" placeholder="Street address" value={streetAddress} name="streetAddress" onChange={ev => setStreetAddress(ev.target.value)} />
-                            <Input type="text" placeholder="Country" value={country} name="country" onChange={ev => setCountry(ev.target.value)} />
-                            <Button black block onClick={goToPayment}>Continue to payment</Button>
-                            <Button black block onClick={clearCart}>Clear cart</Button>
+                            <Input type="text" placeholder="Nome" value={name} name="name" onChange={ev => setName(ev.target.value)} />
+                            <Input type="text" placeholder="Email"
+                                value={(session && session.status.toString() === "authenticated") ? session.data.user.email : null}
+                                name="email" onChange={ev => setEmail(ev.target.value)} />
+                            <Input type="text" placeholder="Cidade" value={city} name="city" onChange={ev => setCity(ev.target.value)} />
+                            <Input type="text" placeholder="CEP" value={postalCode} name="postalCode" onChange={ev => setPostalCode(ev.target.value)} />
+                            <Input type="text" placeholder="Rua, número" value={streetAddress} name="streetAddress" onChange={ev => setStreetAddress(ev.target.value)} />
+                            <Input type="text" placeholder="Complemento" value={country} name="country" onChange={ev => setCountry(ev.target.value)} />
+                            <Button black block onClick={goToPayment}>Finalizar compra</Button>
+                            <Button black block onClick={clearCart}>Limpar carrinho</Button>
                         </Box>
                     )}
                 </ColumnsWrapper>

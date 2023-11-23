@@ -74,10 +74,10 @@ export default function Header() {
                 <Wrapper>
                     <Logo href={'/'}>Ecommerce</Logo>
                     <StyledNav mobileNavActive={mobileNavActive}>
-                        <NavLink href={'/products'}>All products</NavLink>
-                        <NavLink href={'/categories'}>Categories</NavLink>
-                        <NavLink href={'/account'}>Account</NavLink>
-                        <NavLink href={'/cart'}>Cart ({cartProducts.length})</NavLink>
+                        <NavLink href={'/products'}>Todos os produtos</NavLink>
+                        <NavLink href={'/categories'}>Categorias</NavLink>
+                        <NavLink href={'/account'}>Conta</NavLink>
+                        <NavLink href={'/cart'}>Carrinho ({cartProducts.length})</NavLink>
                         {!session && (
                             <NavLink href='/api/auth/signin'
                                 onClick={e => {

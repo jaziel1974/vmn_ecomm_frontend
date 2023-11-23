@@ -10,7 +10,7 @@ export default function ProductsPage({ products }) {
         <>
             <Header></Header>
             <Center>
-                <Title>All products</Title>
+                <Title>Todos os produtos</Title>
                 <ProductsGrid products={products}></ProductsGrid>
             </Center>
         </>

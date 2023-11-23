@@ -7,7 +7,7 @@ import { useContext } from "react";
 import { CartContext } from "./CartContext";
 
 const Bg = styled.div`
-    background-color: #222;
+    background-color: #295700;
     color: #fff;
     padding: 50px 0;
 `;
@@ -74,16 +74,16 @@ export default function Featured({product}) {
                                 <Title>{product.title}</Title>
                                 <Desc>{product.description}</Desc>
                                 <ButtonsWrapper>
-                                    <ButtonLink href={'/product/'+product._id} outline={1} white={1}>Read more</ButtonLink>
+                                    <ButtonLink href={'/product/'+product._id} outline={1} white={1}>Saiba mais</ButtonLink>
                                     <Button white={1} onClick={addFeaturedToCart}>
                                         <CartIcon></CartIcon>
-                                        Add to cart
+                                        Adicionar ao carrinho
                                     </Button>
                                 </ButtonsWrapper>
                             </div>
                         </Column>
                         <Column>
-                            <img src="https://firebasestorage.googleapis.com/v0/b/react-ecommerce-a479e.appspot.com/o/files%2Fproductimages%2F1691276162292.png?alt=media&token=5fea4e5a-f486-4a90-82cd-19a1715a2859" alt="" />
+                            <img src="https://firebasestorage.googleapis.com/v0/b/react-ecommerce-a479e.appspot.com/o/files%2Fproductimages%2F1700679722124.jpg?alt=media&token=e5180e8b-487c-487a-b994-3241908e7b75" alt="" />
                         </Column>
                     </ColumnsWrapper>
                 </Center>
