@@ -1,8 +1,8 @@
-import Featured from "@/components/Featured";
 import Header from "@/components/Header";
-import NewProducts from "@/components/NewProducts";
-import { mongooseConnect } from "@/lib/mongoose";
+import Featured from "@/components/Featured";
 import { Product } from "@/models/Product";
+import { mongooseConnect } from "@/lib/mongoose";
+import NewProducts from "@/components/NewProducts";
 
 export default function HomePage({ featuredProduct, newProducts }) {
   return (
@@ -11,7 +11,7 @@ export default function HomePage({ featuredProduct, newProducts }) {
       <Featured product={featuredProduct}></Featured>
       <NewProducts products={newProducts}></NewProducts>
     </div>
-  )
+  );
 }
 
 
@@ -25,5 +25,5 @@ export async function getServerSideProps() {
       featuredProduct: JSON.parse(JSON.stringify(featuredProduct)),
       newProducts: JSON.parse(JSON.stringify(newProducts))
     }
-  }
+  };
 }

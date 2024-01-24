@@ -1,19 +1,19 @@
-import Button from "@/components/Button";
-import { CartContext } from "@/components/CartContext";
-import Center from "@/components/Center";
 import Header from "@/components/Header";
-import Input from "@/components/Input";
-import Table from "@/components/Table";
+import styled from "styled-components";
+import Center from "@/components/Center";
+import Button from "@/components/Button";
+import {useContext, useEffect, useState} from "react";
+import {CartContext} from "@/components/CartContext";
 import axios from "axios";
+import Table from "@/components/Table";
+import Input from "@/components/Input";
 import { useSession } from "next-auth/react";
-import { useContext, useEffect, useState } from "react";
-import { styled } from "styled-components";
 
 const ColumnsWrapper = styled.div`
     display: grid;
     grid-template-columns: 1fr;
     @media screen and (min-width: 768px) {
-        grid-template-columns: 1.3fr .7fr;
+        grid-template-columns: 1.2fr .8fr;
     }
     gap: 40px;
     margin-top: 40px;
@@ -23,7 +23,6 @@ const Box = styled.div`
     background-color: #fff;
     border-radius: 10px;
     padding: 30px;
-
 `;
 
 const ProductInfoCell = styled.td`
@@ -35,7 +34,7 @@ const ProductImageBox = styled.div`
     height: 100px;
     padding: 2px;
     border: 1px solid rgba(0, 0, 0, 0.1);  
-    display: flex;
+    display:flex;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
@@ -44,10 +43,10 @@ const ProductImageBox = styled.div`
         max-height: 60px;
     }
     @media screen and (min-width: 768px) {
+padding: 10px;
         width: 100px;
         height: 100px;    
-        padding: 10px;
-        img{
+                img{
             max-width: 80px;
             max-height: 80px;
         }
@@ -64,7 +63,7 @@ const QuantityLabel = styled.span`
 `;
 
 const CityHolder = styled.div`
-    display: flex;
+    display:flex;
     gap: 5px;
 `;
 

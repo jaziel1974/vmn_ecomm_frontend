@@ -1,4 +1,7 @@
 {
+  "resolutions": {
+    "styled-components": "^5"
+  },
   "name": "ecommerce-front",
   "version": "0.1.0",
   "private": true,
@@ -10,15 +13,17 @@
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^2.0.1",
+    "@babel/core": "^7.0.0-0",
     "axios": "^1.4.0",
     "micro": "^10.0.1",
     "mongodb": "^6.1.0",
     "mongoose": "^7.5.3",
     "mqtt": "^5.1.4",
     "next": "13.4.13",
-    "next-auth": "^4.23.2",
+    "next-auth": "^4.24.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-is": "^18.2.0",
     "stripe": "^12.18.0",
     "styled-components": "^6.0.7"
   }

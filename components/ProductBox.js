@@ -1,6 +1,6 @@
-import { styled } from "styled-components"
-import CartIcon from "./icons/CartIcon";
-import Button from "./Button";
+import styled from "styled-components";
+import Button from "@/components/Button";
+import CartIcon from "@/components/icons/CartIcon";
 import Link from "next/link";
 import { useContext } from "react";
 import { CartContext } from "./CartContext";
@@ -23,16 +23,14 @@ const WhiteBox = styled(Link)`
         max-width: 100%;
         max-height: 80px;
     }
-    min-width: 140px
-
-`;
+    `;
 
 const Title = styled(Link)`
     font-weight: normal;
-    font-size: .9rem;
-    margin: 0;
-    color: inherit;
-    text-decoration: none;
+    font-size:.9rem;
+    color:inherit;
+    text-decoration:none;
+margin:0;
 `;
 
 const ProductInfoBox = styled.div`
@@ -46,17 +44,17 @@ const PriceRow = styled.div`
         gap: 5px;
     }
     align-items: center;
-    justify-content: space-between;
-    margin-top: 2px;
+    justify-content:space-between;
+    margin-top:2px;
 `;
 
 const Price = styled.div`
     font-size: 1rem;
-    font-weight: 400;
+    font-weight:400;
     text-align: right;
     @media screen and (min-width: 768px) {
         font-size: 1.2rem;
-        font-weight: 600;
+        font-weight:600;
         text-align: left;
     }    
 `;
@@ -79,11 +77,11 @@ export default function ProductBox({ _id, title, description, price, images }) {
                             ${price}
                         </Price>
                     )}
-                    <Button block onClick={() => addProduct(_id)} primary={1} outline={1}>
+                    <Button block="true" onClick={() => addProduct(_id)} primary={1} outline={1}>
                         Adicionar ao carrinho
                     </Button>
                 </PriceRow>
             </ProductInfoBox>
         </ProductWrapper>
-    )
+    );
 }

@@ -1,7 +1,8 @@
 import { mongooseConnect } from "@/lib/mongoose";
-import { Order } from "@/models/Order";
-import { buffer } from 'micro';
 const stripe = require('stripe')(process.env.STRIPE_SK);
+import { buffer } from 'micro';
+import { Order } from "@/models/Order";
+
 const endpointSecret = 'whsec_19c7a914fbbf51a240dc25e586136c36fb8adcc939f6f633ff954a1cb1681700';
 
 export default async function handler(req, res) {
@@ -34,10 +35,8 @@ export default async function handler(req, res) {
 }
 
 export const config = {
-    api: {
-        bodyParser: false
-    }
-}
+    api: {bodyParser:false,}
+};
 
-//whoa-mighty-polite-nicer
-//acct_1NfUWkKKCsRQphcR
+// bright-thrift-cajole-lean
+// acct_1Lj5ADIUXXMmgk2a

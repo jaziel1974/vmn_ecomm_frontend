@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import styled from "styled-components";
 
 const StyledDiv = styled.div`
     max-width: 800px;
@@ -6,10 +6,8 @@ const StyledDiv = styled.div`
     padding: 0 20px;
 `;
 
-export default function Center({children}){
+export default function Center({children}) {
     return (
-        <StyledDiv>
-            {children}
-        </StyledDiv>
-    )
+        <StyledDiv>{children}</StyledDiv>
+    );
 }

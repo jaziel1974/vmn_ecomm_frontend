@@ -1,4 +1,4 @@
-const { createContext, useState, useEffect } = require("react");
+import {createContext, useEffect, useState} from "react";
 
 export const CartContext = createContext({});
 
@@ -15,7 +15,7 @@ export function CartContextProvider({ children }) {
         if (ls && ls.getItem('cart')) {
             setCartProducts(JSON.parse(ls.getItem('cart')));
         }
-    }, [])
+    }, []);
     function addProduct(productId) {
         setCartProducts(prev => [...prev, productId]);
     }
@@ -36,5 +36,5 @@ export function CartContextProvider({ children }) {
         <CartContext.Provider value={{ cartProducts, setCartProducts, addProduct, removeProduct, clearCart }}>
             {children}
         </CartContext.Provider>
-    )
+    );
 }

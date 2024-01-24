@@ -1,5 +1,5 @@
-import { styled } from "styled-components";
-import ProductBox from "./ProductBox";
+import styled from "styled-components";
+import ProductBox from "@/components/ProductBox";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const StyledProductsGrid = styled.div`
@@ -66,5 +66,5 @@ export default function ProductsGrid({ products }) {
                 ))}
             </StyledProductsGrid>
         </div>
-    )
+    );
 }
