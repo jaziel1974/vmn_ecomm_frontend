@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useContext } from "react";
 import { CartContext } from "./CartContext";
 import { useSession } from "next-auth/react";
+import useAuth from "@/pages/hooks/useAuth";
 
 const ProductWrapper = styled.div`
 
@@ -60,7 +61,7 @@ const Price = styled.div`
 `;
 
 export default function ProductBox({ _id, title, description, price, images }) {
-    const session = useSession();
+    const {signed} = useAuth();
 
     const { addProduct } = useContext(CartContext);
     const url = '/product/' + _id;
@@ -72,7 +73,7 @@ export default function ProductBox({ _id, title, description, price, images }) {
             <ProductInfoBox>
                 <Title href={url}>{title}</Title>
                 <PriceRow>
-                    {session && session.status.toString() === "authenticated" && (
+                    {signed && (
                         <Price>
                             ${price}
                         </Price>

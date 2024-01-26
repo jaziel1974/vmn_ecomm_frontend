@@ -1,10 +1,11 @@
 import Link from "next/link";
 import styled from "styled-components";
 import Center from "@/components/Center";
-import {useContext, useState} from "react";
-import {CartContext} from "@/components/CartContext";
+import { useContext, useState } from "react";
+import { CartContext } from "@/components/CartContext";
 import BarsIcon from "@/components/icons/Bars";
 import { useSession } from "next-auth/react";
+import useAuth from "@/pages/hooks/useAuth";
 
 const StyledHeader = styled.header`
     background-color: #222;  
@@ -64,11 +65,14 @@ const NavButton = styled.button`
 `;
 
 export default function Header() {
-    const { data: session, status } = useSession();
-
     const { cartProducts } = useContext(CartContext);
-    
     const [mobileNavActive, setMobileNavActive] = useState(false);
+    const { signed, signout } = useAuth();
+
+    const handleLogin = () => {
+        signout();
+    }
+
     return (
         <StyledHeader >
             <Center>
@@ -79,19 +83,14 @@ export default function Header() {
                         <NavLink href={'/categories'}>Categorias</NavLink>
                         <NavLink href={'/account'}>Conta</NavLink>
                         <NavLink href={'/cart'}>Carrinho ({cartProducts.length})</NavLink>
-                        {!session && (
-                            <NavLink href='/api/auth/signin'
-                                onClick={e => {
-                                    e.preventDefault();
-                                    signIn();
-                                }}>Sign in
-                            </NavLink>
+                        {!signed && (
+                            <NavLink href={'/signin'}>Sign in</NavLink>
                         )}
-                        {session && (
-                            <NavLink href='/api/auth/signout'
+                        {signed && (
+                            <NavLink href=''
                                 onClick={e => {
                                     e.preventDefault();
-                                    signOut();
+                                    handleLogin();
                                 }}>Sign out
                             </NavLink>
                         )}
