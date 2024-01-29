@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import useAuth from './hooks/useAuth';
 import { useRouter } from 'next/navigation'
+import axios from 'axios';
 
 export const Container = styled.div`
     display: flex;
@@ -63,19 +64,39 @@ export default function SigninPage() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [verificationCode, setVerificationCode] = useState('');
+    const [isPasswordRecovery, setIsPasswordRecovery] = useState(false);
     const [error, setError] = useState('');
 
     const handleLogin = () => {
-        if(!email | !password) {
+        if (!email | !password) {
             setError('Preencha todos os campos');
             return;
         }
-        const res = signin(email, password);
-        if(res){
-            setError(res);
+        signin(email, password)
+            .then(res => {
+                if (res) {
+                    setError(res);
+                    return;
+                }
+                router.push('/products');
+            });
+    }
+
+    const handlePasswordReset = (email, verificationCode) => {
+        if (!email) {
+            setError('Preencha o e-mail');
             return;
         }
-        router.push('/products');
+        //const res = axios.get('/api/logging?email=')
+        const res = true;
+        if (res) {
+            setIsPasswordRecovery(false);
+            router.push('/signup');
+        }
+        else {
+            setError('Não foi possível validar o código informado. Por favor, tente novamente.')
+        }
     }
 
     return (
@@ -84,12 +105,20 @@ export default function SigninPage() {
             <Center>
                 <Container>
                     <Content>
-
                         <Input placeholder="E-mail" type="email" value={email} onChange={e => [setEmail(e.target.value), setError('')]}></Input>
                         <Input placeholder="Senha" type="password" value={password} onChange={e => [setPassword(e.target.value), setError('')]}></Input>
+                        {isPasswordRecovery && (
+                            <div>
+                                <Input placeholder="Código de verificação" type="number" value={verificationCode}></Input>
+                                <Button onClick={e => handlePasswordReset(email, verificationCode)}>Ok</Button>
+                            </div>
+                        )}
                         <LabelError>{error}</LabelError>
                         <Button black block onClick={handleLogin}>Entrar</Button>
                         <LabelSignup>Não possui uma conta? <ButtonLink href="/signup" black={1}>Cadastre-se</ButtonLink></LabelSignup>
+                        {!isPasswordRecovery && (
+                            <Button black={1} onClick={e => setIsPasswordRecovery(true)}>Redefinir senha</Button>
+                        )}
                     </Content>
                 </Container>
             </Center>

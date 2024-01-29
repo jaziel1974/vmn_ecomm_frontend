@@ -7,7 +7,7 @@ import {CartContext} from "@/components/CartContext";
 import axios from "axios";
 import Table from "@/components/Table";
 import Input from "@/components/Input";
-import { useSession } from "next-auth/react";
+import useAuth from "./hooks/useAuth";
 
 const ColumnsWrapper = styled.div`
     display: grid;
@@ -68,7 +68,7 @@ const CityHolder = styled.div`
 `;
 
 export default function CartPage() {
-    const session = useSession();
+    const {signed,user} = useAuth();
 
     const { cartProducts, addProduct, removeProduct, clearCart } = useContext(CartContext);
     const [products, setProducts] = useState([]);
@@ -85,9 +85,8 @@ export default function CartPage() {
             axios.post('/api/cart', { ids: cartProducts })
                 .then(response => {
                     setProducts(response.data);
-                    if (session && session.data?.user?.email) {
-
-                        axios.get('/api/customers?email=' + session.data.user.email)
+                    if (signed) {
+                        axios.get('/api/customers?email=' + user.email)
                             .then(response => {
                                 setName(response.name);
                                 setStreetAddress(response.address);
@@ -122,6 +121,11 @@ export default function CartPage() {
     }
 
     async function goToPayment() {
+        if (!signed) {
+            alert('Faça login para continuar');
+            return;
+        }
+
         const response = await axios.post('/api/checkout', {
             name,
             email,
@@ -202,7 +206,7 @@ export default function CartPage() {
                                                 </Button>
                                             </td>
                                             <td>
-                                                {session && session.status.toString() === "authenticated" && (
+                                                {signed && (
                                                     cartProducts.filter(id => id === product._id).length * product.price
                                                 )}
                                             </td>
@@ -222,7 +226,7 @@ export default function CartPage() {
                             <h2>Order information</h2>
                             <Input type="text" placeholder="Nome" value={name} name="name" onChange={ev => setName(ev.target.value)} />
                             <Input type="text" placeholder="Email"
-                                value={(session && session.status.toString() === "authenticated") ? session.data.user.email : null}
+                                value={signed ? user.email : null}
                                 name="email" onChange={ev => setEmail(ev.target.value)} />
                             <Input type="text" placeholder="Cidade" value={city} name="city" onChange={ev => setCity(ev.target.value)} />
                             <Input type="text" placeholder="CEP" value={postalCode} name="postalCode" onChange={ev => setPostalCode(ev.target.value)} />

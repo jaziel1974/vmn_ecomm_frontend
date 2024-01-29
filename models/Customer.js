@@ -7,10 +7,11 @@ const CustomerSchema = new Schema({
     addressNotes: String,
     priceId: { type: Number, required: true },
     email: {type: String, required: true},
+    emailValidationHash: {type: String}
 },
     {
         timestamps: true
     }
 );
 
-export const Customer = models.Customer || model('Customer', CustomerSchema);
+export const Customer = models?.Customer || model('Customer', CustomerSchema);

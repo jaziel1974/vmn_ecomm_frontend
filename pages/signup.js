@@ -61,27 +61,33 @@ export default function SigninPage() {
 
     const { signup } = useAuth();
 
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [emailConfirm, setEmailConfirm] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
     const handleSignup = () => {
-        if(!email | !emailConfirm | !password) {
+        if (!name | !email | !emailConfirm | !password) {
             setError('Preencha todos os campos');
             return;
-        } else if(email !== emailConfirm){
+        } else if (email !== emailConfirm) {
             setError('Os e-mails devem ser iguais');
             return;
         }
-        const res = signup(email, password);
-        if(res){
-            setError(res);
-            return;
-        }
 
-        alert('Cadastrado com sucesso!');
-        router.push('/products');
+        signup(name, email, password)
+            .then(res => {
+                if (res?.data){
+                    setError("Solicitação de cadastro realizada. Por favor, avise-nos pelo WhatsApp o e-mail cadastrado. Responderemos o mais rápido possível.");
+                }
+                else{
+                    setError(res);
+                }
+            })
+            .catch(err => {
+                setError(err);
+            })
     }
 
     return (
@@ -90,6 +96,7 @@ export default function SigninPage() {
             <Center>
                 <Container>
                     <Content>
+                        <Input placeholder="Nome" type="name" value={name} onChange={e => [setName(e.target.value), setError('')]}></Input>
                         <Input placeholder="E-mail" type="email" value={email} onChange={e => [setEmail(e.target.value), setError('')]}></Input>
                         <Input placeholder="Confirme seu e-mail" type="email" value={emailConfirm} onChange={e => [setEmailConfirm(e.target.value), setError('')]}></Input>
                         <Input placeholder="Senha" type="password" value={password} onChange={e => [setPassword(e.target.value), setError('')]}></Input>
