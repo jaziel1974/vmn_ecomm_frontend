@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useContext } from "react";
 import { CartContext } from "./CartContext";
 import { useSession } from "next-auth/react";
-import useAuth from "@/pages/hooks/useAuth";
+import { AuthContext } from "@/pages/api/auth/auth";
 
 const ProductWrapper = styled.div`
 
@@ -61,7 +61,7 @@ const Price = styled.div`
 `;
 
 export default function ProductBox({ _id, title, description, price, images }) {
-    const {signed} = useAuth();
+    const {signed} = useContext(AuthContext);
 
     const { addProduct } = useContext(CartContext);
     const url = '/product/' + _id;

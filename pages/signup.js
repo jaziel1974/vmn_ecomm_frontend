@@ -3,10 +3,10 @@ import ButtonLink from '@/components/ButtonLink';
 import Center from '@/components/Center';
 import Header from '@/components/Header';
 import Input from '@/components/Input';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
-import useAuth from './hooks/useAuth';
 import { useRouter } from 'next/navigation'
+import { AuthContext } from './api/auth/auth';
 
 export const Container = styled.div`
     display: flex;
@@ -59,7 +59,7 @@ export const Strong = styled.strong`
 export default function SigninPage() {
     const router = useRouter();
 
-    const { signup } = useAuth();
+    const { signup } = useContext(AuthContext);
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');

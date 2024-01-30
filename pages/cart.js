@@ -7,7 +7,7 @@ import {CartContext} from "@/components/CartContext";
 import axios from "axios";
 import Table from "@/components/Table";
 import Input from "@/components/Input";
-import useAuth from "./hooks/useAuth";
+import { AuthContext } from "./api/auth/auth";
 
 const ColumnsWrapper = styled.div`
     display: grid;
@@ -68,7 +68,7 @@ const CityHolder = styled.div`
 `;
 
 export default function CartPage() {
-    const {signed,user} = useAuth();
+    const {signed,user} = useContext(AuthContext);
 
     const { cartProducts, addProduct, removeProduct, clearCart } = useContext(CartContext);
     const [products, setProducts] = useState([]);

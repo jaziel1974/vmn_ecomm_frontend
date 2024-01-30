@@ -5,7 +5,7 @@ import { useContext, useState } from "react";
 import { CartContext } from "@/components/CartContext";
 import BarsIcon from "@/components/icons/Bars";
 import { useSession } from "next-auth/react";
-import useAuth from "@/pages/hooks/useAuth";
+import { AuthContext } from "@/pages/api/auth/auth";
 
 const StyledHeader = styled.header`
     background-color: #222;  
@@ -67,7 +67,7 @@ const NavButton = styled.button`
 export default function Header() {
     const { cartProducts } = useContext(CartContext);
     const [mobileNavActive, setMobileNavActive] = useState(false);
-    const { signed, signout } = useAuth();
+    const { signed, signout } = useContext(AuthContext);
 
     const handleLogin = () => {
         signout();
