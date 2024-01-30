@@ -4,7 +4,7 @@ import { CustomerHold } from "@/models/CustomerHold";
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 
-export const AuthContext = createContext({});
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState();
