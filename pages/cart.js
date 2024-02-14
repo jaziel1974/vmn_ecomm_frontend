@@ -122,8 +122,8 @@ export default function CartPage() {
 
     async function goToPayment() {
         if (!signed) {
-            alert('Faça login para continuar');
-            return;
+            //alert('Faça login para continuar');
+            //return;
         }
 
         const response = await axios.post('/api/checkout', {
