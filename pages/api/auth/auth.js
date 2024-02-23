@@ -23,13 +23,14 @@ export const AuthProvider = ({ children }) => {
 
     const signin = async (email, password) => {
         const user = await axios.get('/api/customers?email=' + email);
-        const hasUser = user?.data?.email === email;
+        const userData = user?.data;
+        const hasUser = userData?.email === email;
 
         if (hasUser) {
             if (user.data.email === email /*&& user.data.password === password*/) {
                 const token = Math.random().toString(36).substring(2);
                 localStorage.setItem('user_token', JSON.stringify({ email, token }));
-                setUser({ email, password });
+                setUser({ email, password, user });
                 return;
             }
             else {

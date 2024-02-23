@@ -2,12 +2,13 @@ import Header from "@/components/Header";
 import styled from "styled-components";
 import Center from "@/components/Center";
 import Button from "@/components/Button";
-import {useContext, useEffect, useState} from "react";
-import {CartContext} from "@/components/CartContext";
+import { useContext, useEffect, useState } from "react";
+import { CartContext } from "@/components/CartContext";
 import axios from "axios";
 import Table from "@/components/Table";
 import Input from "@/components/Input";
 import { AuthContext } from "./api/auth/auth";
+import { getPrice } from "./products";
 
 const ColumnsWrapper = styled.div`
     display: grid;
@@ -68,17 +69,18 @@ const CityHolder = styled.div`
 `;
 
 export default function CartPage() {
-    const {signed,user} = useContext(AuthContext);
+    const { signed, user } = useContext(AuthContext);
 
     const { cartProducts, addProduct, removeProduct, clearCart } = useContext(CartContext);
     const [products, setProducts] = useState([]);
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState(user?.email);
     const [city, setCity] = useState('');
     const [postalCode, setPostalCode] = useState('');
     const [streetAddress, setStreetAddress] = useState('');
     const [country, setCountry] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
+    const [priceId, setPriceId] = useState(user?.user.data.priceId);
 
     useEffect(() => {
         if (cartProducts.length > 0) {
@@ -122,8 +124,8 @@ export default function CartPage() {
 
     async function goToPayment() {
         if (!signed) {
-            //alert('Faça login para continuar');
-            //return;
+            alert('Faça login para continuar');
+            return;
         }
 
         const response = await axios.post('/api/checkout', {
@@ -133,7 +135,8 @@ export default function CartPage() {
             postalCode,
             streetAddress,
             country,
-            cartProducts
+            cartProducts,
+            priceId,
         });
         if (response.data.url) {
             window.location = response.data.url;
@@ -141,11 +144,10 @@ export default function CartPage() {
         alternativePayment();
     }
 
-
     let total = 0;
     if (products.length > 0) {
         for (const productId of cartProducts) {
-            const price = products.find(p => p._id === productId)?.price || 0;
+            const price = getPrice(products.find(p => p._id === productId));
             total += price;
         }
     }
@@ -206,9 +208,9 @@ export default function CartPage() {
                                                 </Button>
                                             </td>
                                             <td>
-                                                {signed && (
-                                                    cartProducts.filter(id => id === product._id).length * product.price
-                                                )}
+                                                {
+                                                    cartProducts.filter(id => id === product._id).length * getPrice(product)
+                                                }
                                             </td>
                                         </tr>
                                     ))}
@@ -226,7 +228,7 @@ export default function CartPage() {
                             <h2>Order information</h2>
                             <Input type="text" placeholder="Nome" value={name} name="name" onChange={ev => setName(ev.target.value)} />
                             <Input type="text" placeholder="Email"
-                                value={signed ? user.email : null}
+                                value={email}
                                 name="email" onChange={ev => setEmail(ev.target.value)} />
                             <Input type="text" placeholder="Cidade" value={city} name="city" onChange={ev => setCity(ev.target.value)} />
                             <Input type="text" placeholder="CEP" value={postalCode} name="postalCode" onChange={ev => setPostalCode(ev.target.value)} />

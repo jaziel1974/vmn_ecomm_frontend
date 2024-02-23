@@ -11,6 +11,7 @@ import CartIcon from "@/components/icons/CartIcon";
 import { useContext } from "react";
 import { CartContext } from "@/components/CartContext";
 import { useSession } from "next-auth/react";
+import { AuthContext } from "../api/auth/auth";
 
 const ColWrapper = styled.div`
     display: grid;
@@ -31,7 +32,7 @@ const Price = styled.span`
 `;
 
 export default function ProductPage({ product }) {
-    const session = useSession();
+    const { signed, user } = useContext(AuthContext);
     const { addProduct } = useContext(CartContext);
 
     return (
@@ -47,7 +48,7 @@ export default function ProductPage({ product }) {
                         <p>{product.description}</p>
                         <PriceRow>
                             <div>
-                                {session && session.status.toString() === "authenticated" && (
+                                {signed && (
                                     <Price>${product.price}</Price>
                                 )}
                             </div>

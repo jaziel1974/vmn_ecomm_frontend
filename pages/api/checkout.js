@@ -1,9 +1,9 @@
-import {mongooseConnect} from "@/lib/mongoose";
-import {Product} from "@/models/Product";
-import {Order} from "@/models/Order";
+import { mongooseConnect } from "@/lib/mongoose";
+import { Product } from "@/models/Product";
+import { Order } from "@/models/Order";
 const stripe = require('stripe')(process.env.STRIPE_SK);
 
-export default async function handler(req,res) {
+export default async function handler(req, res) {
     if (req.method !== 'POST') {
         res.json('should be a POST request');
         return;
@@ -16,13 +16,32 @@ export default async function handler(req,res) {
         streetAddress,
         country,
         cartProducts,
+        priceId,
     } = req.body;
 
     await mongooseConnect();
 
     const productIds = cartProducts;
     const uniqueIds = [...new Set(productIds)];
-    const productInfos = await Product.find({_id:uniqueIds});
+    const productInfos = await Product.find({ _id: uniqueIds });
+
+    const getPrice = (product, pricePerZone) => {
+        if (!product) {
+            return 0;
+        }
+
+        if (pricePerZone) {
+            pricePerZone.filter(
+                price => {
+                    return price.name == priceId;
+                })
+            if (pricePerZone.length > 0) {
+                return pricePerZone[0].values;
+            }
+            return product.price;
+        }
+        return product.price;
+    };
 
     let line_items = [];
     for (const productId of uniqueIds) {
@@ -33,21 +52,24 @@ export default async function handler(req,res) {
                 quantity: quantity,
                 currency: 'USD',
                 name: productInfo.title,
-                unit_amount: quantity * productInfo.price * 100,
+                unit_amount: quantity * getPrice(productInfo, productInfo._doc.pricePerZone),
             });
         }
     }
 
+
+    /**/
     const orderDoc = await Order.create({
-        line_items, 
-        name, 
-        email, 
-        city, 
-        postalCode, 
-        streetAddress, 
-        country, 
-        paid:false
+        line_items,
+        name,
+        email,
+        city,
+        postalCode,
+        streetAddress,
+        country,
+        paid: false
     });
+    
 
     /*
     const session = await stripe.checkout.sessions.create({

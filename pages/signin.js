@@ -69,7 +69,7 @@ export default function SigninPage() {
     const [error, setError] = useState('');
 
     const handleLogin = () => {
-        if (!email | !password) {
+        if (!email /*| !password*/) {
             setError('Preencha todos os campos');
             return;
         }
@@ -114,7 +114,7 @@ export default function SigninPage() {
                             </div>
                         )}
                         <LabelError>{error}</LabelError>
-                        <Button black block onClick={handleLogin}>Entrar</Button>
+                        <Button black block onClick={handleLogin}>Entrar (ENTER)</Button>
                         <LabelSignup>Não possui uma conta? <ButtonLink href="/signup" black={1}>Cadastre-se</ButtonLink></LabelSignup>
                         {!isPasswordRecovery && (
                             <Button black={1} onClick={e => setIsPasswordRecovery(true)}>Redefinir senha</Button>
