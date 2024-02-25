@@ -38,12 +38,12 @@ export function getPrice(product) {
     }
     if (signed) {
         if (product.pricePerZone) {
-            product.pricePerZone.filter(
+            var zonedPrice = product.pricePerZone.filter(
                 price => {
                     return price.name == user.user.data.priceId;
                 })
-            if (product.pricePerZone.length > 0) {
-                return product.pricePerZone[0].values;
+            if (zonedPrice > 0) {
+                return zonedPrice[0].values;
             }
             return product.price;
         }

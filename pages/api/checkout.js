@@ -31,11 +31,12 @@ export default async function handler(req, res) {
         }
 
         if (pricePerZone) {
-            pricePerZone.filter(
+            var zonedPrice = pricePerZone.filter(
                 price => {
-                    return price.name == priceId;
+                    var match = price.name == priceId;
+                    return match;
                 })
-            if (pricePerZone.length > 0) {
+            if (zonedPrice.length > 0) {
                 return pricePerZone[0].values;
             }
             return product.price;
@@ -58,7 +59,6 @@ export default async function handler(req, res) {
     }
 
 
-    /**/
     const orderDoc = await Order.create({
         line_items,
         name,
@@ -69,7 +69,7 @@ export default async function handler(req, res) {
         country,
         paid: false
     });
-    
+
 
     /*
     const session = await stripe.checkout.sessions.create({
