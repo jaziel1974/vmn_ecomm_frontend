@@ -56,6 +56,24 @@ export const Strong = styled.strong`
     }
 `;
 
+export const DivBlur = styled.div`
+    width:100%;
+    height:100%;
+    background-color: darkgreen;
+    position: absolute;
+    left: 0px;
+    z-index: 100;
+    opacity: 80%;
+    padding-top: 404%
+`;
+
+export const LabelWarning = styled.label`
+    text-align: center;
+    font-size: 2.5rem;
+    color: #FEBA51;
+
+`;
+
 export default function SigninPage() {
     const router = useRouter();
 
@@ -90,10 +108,15 @@ export default function SigninPage() {
             })
     }
 
+
+
     return (
         <>
             <Header />
             <Center>
+                <DivBlur>
+                    <LabelWarning>Entre em contato pelo whats para se cadastrar</LabelWarning>
+                </DivBlur>
                 <Container>
                     <Content>
                         <Input placeholder="Nome" type="name" value={name} onChange={e => [setName(e.target.value), setError('')]}></Input>

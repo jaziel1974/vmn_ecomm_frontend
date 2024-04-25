@@ -14,7 +14,7 @@ export default function ProductsPage({ products }) {
             <Header></Header>
             <Center>
                 <Title>Todos os produtos</Title>
-                <ProductsGrid products={products}></ProductsGrid>
+                <ProductsGrid products={products} search={""}></ProductsGrid>
             </Center>
         </>
     );

@@ -6,7 +6,6 @@ import Input from '@/components/Input';
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation'
-import axios from 'axios';
 import { AuthContext } from './api/auth/auth';
 
 export const Container = styled.div`
@@ -115,7 +114,10 @@ export default function SigninPage() {
                         )}
                         <LabelError>{error}</LabelError>
                         <Button black block onClick={handleLogin}>Entrar (ENTER)</Button>
-                        <LabelSignup>Não possui uma conta? <ButtonLink href="/signup" black={1}>Cadastre-se</ButtonLink></LabelSignup>
+                        <div style={{textAlign: "center"}}>
+                            <LabelSignup>Não possui uma conta?</LabelSignup>
+                            <ButtonLink href="/signup" black={1}>Cadastre-se</ButtonLink>
+                        </div>
                         {!isPasswordRecovery && (
                             <Button black={1} onClick={e => setIsPasswordRecovery(true)}>Redefinir senha</Button>
                         )}

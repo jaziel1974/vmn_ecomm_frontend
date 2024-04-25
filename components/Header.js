@@ -1,31 +1,30 @@
 import Link from "next/link";
 import styled from "styled-components";
 import Center from "@/components/Center";
-import { useContext, useEffect, useRef, useState } from "react";
 import { CartContext } from "@/components/CartContext";
 import { useSession } from "next-auth/react";
 import { AuthContext } from "@/pages/api/auth/auth";
 import Image from 'next/image'
-import BurgerMenu from "./BurgerMenu";
-import BurgerMenuItems from "./BurgerMenuItems";
+import { useContext, useCallback, useEffect, useRef, useState } from "react";
+import { ShoppingBagIcon } from '@heroicons/react/24/outline'
+import HelpIcon from "./icons/Help";
+import BasketIcon from "./icons/Bakset";
 
 const StyledHeader = styled.header`
     background-color: #1B422E;  
-    position: fixed;
     width: 100%;
-    top: 0;
-    transition: height 0.5s
 `;
+
 const Logo = styled.div`
     color:#fff;
     text-decoration:none;
-    position: relative;
-    z-index: 3;
 `;
+
 const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
 `;
+
 const StyledNav = styled.nav`
     ${props => props.mobileNavActive ? `
         display: block;
@@ -49,13 +48,14 @@ const StyledNav = styled.nav`
 `;
 
 const NavLink = styled(Link)`
-    display: block;
+    display: flex;
     color:#FEBA51;
     text-decoration:none;
-    padding: 10px 0;
     @media screen and (min-width: 768px) {
         padding:0;
     }
+    height: 25px;
+    font-size: large;
 `;
 
 const NavButton = styled.button`
@@ -74,70 +74,93 @@ const NavButton = styled.button`
     }
 `;
 
+
 const StyledSearchGrid = styled.div`
-    position: relative;
-    top: 50px;
+    @media screen and (min-width: 769px) {
+        width: 60%;
+    }
+    @media screen and (max-width: 768px) {
+        color: green;
+    }
+`;
+
+const StyledSearchText = styled.input`
+    opacity: 80%;
+    width: 100%;
+    color: green;
     height: 30px;
 `;
 
 export default function Header() {
-    const [scrolled, setScrolled] = useState(false);
     const { cartProducts } = useContext(CartContext);
     const [mobileNavActive, setMobileNavActive] = useState(false);
     const { signed, signout } = useContext(AuthContext);
     const [open, setOpen] = useState(false);
-    const node = useRef();
 
     const handleLogin = () => {
         signout();
     }
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            window.addEventListener("scroll", () => {
-                setScrolled(window.scrollY > 200)
-            });
+    const ref = useRef(null);
+    const [search, setSearch] = useState('');
+
+    const handleKeyPress = useCallback((event) => {
+        const truefalse = event.key == '/';
+        const escKey = event.key == 'Escape';
+        console.log(event.key);
+        if (truefalse) {
+            ref.current.focus()
+            event.preventDefault();
+        }
+        else if (escKey) {
+            setSearch('');
         }
     }, []);
 
-    const useOnClickOutside = (ref, handler) => {
-        useEffect(() => {
-            const listener = event => {
-                if (!ref.current || ref.current.contains(event.target)) return;
-                handler(event);
-            };
-            document.addEventListener("mousedown", listener);
+    useEffect(() => {
+        // attach the event listener
+        document.addEventListener('keydown', handleKeyPress);
 
-            return () => {
-                document.removeEventListener("mousedown", listener);
-            };
-        }, [ref, handler]);
-    };
-
-    useOnClickOutside(node, () => setOpen(!open));
+        // remove the event listener
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [handleKeyPress]);
 
     return (
-        <StyledHeader style={{ height: !scrolled ? "100px" : "80px" }}>
+        <StyledHeader>
             <Center>
                 <Wrapper>
                     <Logo>
-                        {!scrolled ?
-                            <Image
-                                src='/logo.png'
-                                alt='Verde Musgo Natural'
-                                height='72'
-                                width='76'
-                                style={{ paddingTop: "13px" }}
-                            />
-                            :
-                            <h2 className="fontFamily" style={{ border: "0px", color: "#FEBA51", marginTop: "10px" }}> Verde Musgo Natural</h2>
-                        }
+                        <Image
+                            src='/logo.png'
+                            alt='Verde Musgo Natural'
+                            height='72'
+                            width='76'
+                            style={{ paddingTop: "13px" }}
+                        />
                     </Logo>
-                    <StyledNav style={{ paddingTop: "20px" }}>
-                        <NavLink href={'/products'}>Todos os produtos</NavLink>
-                        <NavLink href={'/categories'}>Categorias</NavLink>
-                        <NavLink href={'/account'}>Conta</NavLink>
-                        <NavLink href={'/cart'}>Carrinho ({cartProducts.length})</NavLink>
+
+                    <StyledSearchGrid style={{ paddingTop: "20px" }}>
+                        <form>
+                            <StyledSearchText type="text"
+                                ref={ref}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="Procurar itens... pressione /"
+                                value={search}
+                            >
+                            </StyledSearchText>
+                        </form>
+                    </StyledSearchGrid>
+
+                    <StyledNav style={{ paddingTop: "25px" }}>
+                        <NavLink href={'/cart'}>
+                            <BasketIcon/>
+                            ({cartProducts.length})
+                        </NavLink>
+                        <NavLink href={'/help'}>
+                            <HelpIcon/>
+                        </NavLink>
                         {!signed && (
                             <NavLink href={'/signin'}>Sign in</NavLink>
                         )}
@@ -150,10 +173,17 @@ export default function Header() {
                             </NavLink>
                         )}
                     </StyledNav>
+
                     <NavButton onClick={() => setMobileNavActive(prev => !prev)}>
-                        <BurgerMenu open={open} setOpen={setOpen} />
-                        <BurgerMenuItems open={open} setOpen={setOpen} />
+
                     </NavButton>
+                </Wrapper>
+                <Wrapper style={{ justifyContent: "center" }}>
+                    <StyledNav>
+                        <NavLink href={'/products'}>Todos os produtos</NavLink>
+                        <NavLink href={'/categories'}>Categorias</NavLink>
+                        <NavLink href={'/account'}>Conta</NavLink>
+                    </StyledNav>
                 </Wrapper>
             </Center>
         </StyledHeader>
