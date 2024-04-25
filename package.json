@@ -22,6 +22,7 @@
     "next": "13.4.13",
     "next-auth": "^4.24.5",
     "react": "18.2.0",
+    "react-burger-menu": "^3.0.9",
     "react-dom": "18.2.0",
     "react-is": "^18.2.0",
     "stripe": "^12.18.0",

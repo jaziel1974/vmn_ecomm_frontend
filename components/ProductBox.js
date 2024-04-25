@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { AuthContext } from "@/pages/api/auth/auth";
 
 const ProductWrapper = styled.div`
-
+    width: 150px;
 `;
 
 const WhiteBox = styled(Link)`

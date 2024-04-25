@@ -7,7 +7,7 @@ import { useContext } from "react";
 import { CartContext } from "@/components/CartContext";
 
 const Bg = styled.div`
-    background-color: #222;
+    background-color: #1B422E;
     color:#fff;
     padding: 50px 0;
 `;
@@ -20,7 +20,7 @@ const Title = styled.h1`
     }
 `;
 const Desc = styled.p`
-    color:#aaa;
+    color:#FEBA51;
     font-size:.8rem;
 `;
 const ColumnsWrapper = styled.div`

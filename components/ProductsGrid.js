@@ -6,16 +6,30 @@ const StyledProductsGrid = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    @media screen and (min-width: 768px) {
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-    
-    }
+    justify-content: center;
 `;
 
 const StyledSearchGrid = styled.div`
-    position: absolute;
-    right: 55%;
-    top: 0;
+height: 30px;
+@media screen and (min-width: 769px) {
+        position: fixed;
+        right: 2%;
+        top: 50px;
+        right: 2%;
+        width: 40%;
+    }
+    @media screen and (max-width: 768px) {
+        position: fixed;
+        width: 88%;
+        bottom: 0;
+        color: green;
+    }
+`;
+
+const StyledSearchText = styled.input`
+    opacity: 80%;
+    width: 100%;
+    color: green;
 `;
 
 export default function ProductsGrid({ products }) {
@@ -47,17 +61,6 @@ export default function ProductsGrid({ products }) {
 
     return (
         <div>
-            <StyledSearchGrid >
-                <form>
-                    <input type="text"
-                        ref={ref}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Procurar itens... pressione /"
-                        value={search}>
-                    </input>
-                </form>
-            </StyledSearchGrid>
-
             <StyledProductsGrid>
                 {products?.length > 0 && products.filter((pr) => {
                     return search.toLowerCase() === '' ? pr : pr.title.toLowerCase().includes(search.toLowerCase());
@@ -65,6 +68,17 @@ export default function ProductsGrid({ products }) {
                     <ProductBox key={product._id} {...product}>{product.title}</ProductBox>
                 ))}
             </StyledProductsGrid>
+            <StyledSearchGrid id="search">
+                <form>
+                    <StyledSearchText type="text"
+                        ref={ref}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Procurar itens... pressione /"
+                        value={search}
+                    >
+                    </StyledSearchText>
+                </form>
+            </StyledSearchGrid>
         </div>
     );
 }
