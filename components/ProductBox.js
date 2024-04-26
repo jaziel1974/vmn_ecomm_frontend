@@ -11,6 +11,17 @@ const ProductWrapper = styled.div`
     width: 150px;
 `;
 
+const AddToCartDiv = styled.div`
+    display: flex;
+    gap: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    align-items: center;
+    justify-content:space-between;
+    margin-top: -34px;
+    opacity: 80%
+`;
+
 const WhiteBox = styled(Link)`
     background-color: #fff;
     padding: 20px;
@@ -61,15 +72,25 @@ const Price = styled.div`
 `;
 
 export default function ProductBox({ _id, title, description, price, images }) {
-    const {signed} = useContext(AuthContext);
+    const { signed } = useContext(AuthContext);
 
-    const { addProduct } = useContext(CartContext);
+    const { addProduct, removeProduct } = useContext(CartContext);
     const url = '/product/' + _id;
     return (
         <ProductWrapper>
-            <WhiteBox href={url}>
-                <div><img src={images?.[0]} alt="" /></div>
-            </WhiteBox>
+            <div>
+                <WhiteBox href={url}>
+                    <div><img src={images?.[0]} alt="" /></div>
+                </WhiteBox>
+                <AddToCartDiv>
+                    <Button block="true" onClick={() => removeProduct(_id)} addToCart={1}>
+                        -
+                    </Button>
+                    <Button block="true" onClick={() => addProduct(_id)} addToCart={1}>
+                        +
+                    </Button>
+                </AddToCartDiv>
+            </div>
             <ProductInfoBox>
                 <Title href={url}>{title}</Title>
                 <PriceRow>
@@ -78,9 +99,6 @@ export default function ProductBox({ _id, title, description, price, images }) {
                             ${price}
                         </Price>
                     )}
-                    <Button block="true" onClick={() => addProduct(_id)} primary={1} outline={1}>
-                        Adicionar ao carrinho
-                    </Button>
                 </PriceRow>
             </ProductInfoBox>
         </ProductWrapper>

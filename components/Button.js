@@ -1,5 +1,5 @@
 import styled, {css} from "styled-components";
-import {primary} from "@/lib/colors";
+import {primary, background, textColor} from "@/lib/colors";
 
 export const ButtonStyle = css`
         border:0;
@@ -29,7 +29,7 @@ export const ButtonStyle = css`
     border: 1px solid #fff;
   `}
   ${props => props.black && !props.outline && css`
-    background-color: #1B422E;
+    background-color: ${background};
     color: #FEBA51;
   `}
   ${props => props.black && props.outline && css`
@@ -53,6 +53,14 @@ export const ButtonStyle = css`
     svg{
       height: 20px;
     }
+  `}
+  ${props => props.addToCart && css`
+    background-color: ${primary};
+    border: 1px solid ${primary};
+    color: ${textColor};
+    width: 50px;
+    height: 30px;
+    text
   `}
 `;
 

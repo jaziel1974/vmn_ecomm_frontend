@@ -1,13 +1,12 @@
 import Link from "next/link";
 import styled from "styled-components";
-import Center from "@/components/Center";
 import { CartContext } from "@/components/CartContext";
-import { useSession } from "next-auth/react";
 import { AuthContext } from "@/pages/api/auth/auth";
 import Image from 'next/image'
 import { useContext, useCallback, useEffect, useRef, useState } from "react";
 import HelpIcon from "./icons/Help";
 import BasketIcon from "./icons/Bakset";
+import { background } from "@/lib/colors";
 
 const COLORS = {
     primaryDark: "#1B422E",
@@ -15,7 +14,7 @@ const COLORS = {
 };
 
 const StyledHeader = styled.header`
-    background-color: #1B422E;
+    background-color: ${background};
     width: 100%;
     position: fixed;
     top: 0;
@@ -51,7 +50,7 @@ const StyledNav = styled.nav`
     left: 0;
     right: 0;
     padding: 70px 20px 20px;
-    background-color: #1B422E;
+    background-color: ${background};
     @media screen and (min-width: 768px) {
         display: flex;
         position: static;
@@ -74,7 +73,7 @@ const NavLink = styled(Link)`
 
 const ItemLink = styled(Link)`
   display: inline-block;
-  font-size: 3rem;
+  font-size: 2.2rem;
   font-weight: 300;
   text-decoration: none;
   color: ${COLORS.primaryLight};
@@ -137,7 +136,7 @@ const MenuLabel = styled.label`
     @media screen and (max-width: 768px) {
         display: block;
     }
-    background-color: #1B422E;
+    background-color: ${background};
     position: fixed;
     top: 1rem;
     right: 1rem;

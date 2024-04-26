@@ -62,7 +62,7 @@ export const DivBlur = styled.div`
     background-color: darkgreen;
     position: absolute;
     left: 0px;
-    z-index: 100;
+    z-index: 10;
     opacity: 80%;
     padding-top: 404%
 `;
