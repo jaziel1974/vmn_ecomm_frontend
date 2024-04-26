@@ -9,7 +9,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "./api/auth/auth";
 
 export default function ProductsPage({ products }) {
-    
+    const { signed, user } = useContext(AuthContext);
     const [data, setData] = useState('');
     const childToParent = (childData) => {
         setData(childData);
@@ -20,7 +20,9 @@ export default function ProductsPage({ products }) {
             <Header childToParent={childToParent}></Header>
             <Center>
                 <Title>Todos os produtos</Title>
-                {data}
+                {!signed &&
+                    <p>Registre-se para ver o preço</p>
+                }
                 <ProductsGrid products={products} search={data}></ProductsGrid>
             </Center>
         </>

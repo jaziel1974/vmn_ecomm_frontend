@@ -7,6 +7,7 @@ import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation'
 import { AuthContext } from './api/auth/auth';
+import {background} from "@/lib/colors";
 
 export const Container = styled.div`
     display: flex;
@@ -59,7 +60,7 @@ export const Strong = styled.strong`
 export const DivBlur = styled.div`
     width:100%;
     height:100%;
-    background-color: darkgreen;
+    background-color: ${background};
     position: absolute;
     left: 0px;
     z-index: 10;
