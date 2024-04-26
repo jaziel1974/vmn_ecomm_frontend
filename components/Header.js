@@ -6,13 +6,22 @@ import { useSession } from "next-auth/react";
 import { AuthContext } from "@/pages/api/auth/auth";
 import Image from 'next/image'
 import { useContext, useCallback, useEffect, useRef, useState } from "react";
-import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 import HelpIcon from "./icons/Help";
 import BasketIcon from "./icons/Bakset";
 
+const COLORS = {
+    primaryDark: "#1B422E",
+    primaryLight: "#FEBA51",
+};
+
 const StyledHeader = styled.header`
-    background-color: #1B422E;  
+    background-color: #1B422E;
     width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
 `;
 
 const Logo = styled.div`
@@ -23,6 +32,10 @@ const Logo = styled.div`
 const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
+    @media screen and (max-width: 768px) {
+        justify-content: flex-start;
+        column-gap: 30px;
+    }
 `;
 
 const StyledNav = styled.nav`
@@ -43,6 +56,7 @@ const StyledNav = styled.nav`
         display: flex;
         position: static;
         padding: 0;
+        padding-right: 5px;
     }
     height: 40px;
 `;
@@ -56,6 +70,30 @@ const NavLink = styled(Link)`
     }
     height: 25px;
     font-size: large;
+`;
+
+const ItemLink = styled(Link)`
+  display: inline-block;
+  font-size: 3rem;
+  font-weight: 300;
+  text-decoration: none;
+  color: ${COLORS.primaryLight};
+  padding: 1rem 2rem;
+  background-image: linear-gradient(
+    120deg,
+    transparent 0%,
+    transparent 50%,
+    #fff 50%
+  );
+  background-size: 240%;
+  transition: all 0.4s;
+  cursor:pointer;
+  &:hover,
+  &:active {
+    background-position: 100%;
+    color: ${COLORS.primaryDark};
+    transform: translateX(1rem);
+  }
 `;
 
 const NavButton = styled.button`
@@ -80,6 +118,7 @@ const StyledSearchGrid = styled.div`
         width: 60%;
     }
     @media screen and (max-width: 768px) {
+        width: 40%;
         color: green;
     }
 `;
@@ -91,23 +130,119 @@ const StyledSearchText = styled.input`
     height: 30px;
 `;
 
-export default function Header() {
+const MenuLabel = styled.label`
+    @media screen and (min-width: 769px) {
+        display: none;
+    }
+    @media screen and (max-width: 768px) {
+        display: block;
+    }
+    background-color: #1B422E;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    border-radius: 50%;
+    height: 4rem;
+    width: 4rem;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 1rem 3rem rgba(182, 237, 200, 0.3);
+    text-align: center;
+`;
+
+const NavBackground = styled.div`
+  position: fixed;
+  top: 6.5rem;
+  right: 6.5rem;
+  background-image: radial-gradient(
+    ${COLORS.primaryDark},
+    ${COLORS.primaryLight}
+  );
+  height: 6rem;
+  width: 6rem;
+  border-radius: 50%;
+  z-index: 600;
+  transform: ${(props) => (props.clicked ? "scale(80)" : "scale(0)")};
+  transition: transform 0.8s;
+`;
+
+const Icon = styled.span`
+  position: relative;
+  background-color: ${(props) => (props.clicked ? "transparent" : "#FEBA51")};
+  width: 2rem;
+  height: 2px;
+  display: inline-block;
+  margin-top: 2rem;
+  transition: all 0.3s;
+  &::before,
+  &::after {
+    content: "";
+    background-color: #FEBA51;
+    width: 2rem;
+    height: 2px;
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    transition: all 0.3s;
+  }
+  &::before {
+    top: ${(props) => (props.clicked ? "0" : "-0.8rem")};
+    transform: ${(props) => (props.clicked ? "rotate(135deg)" : "rotate(0)")};
+  }
+  &::after {
+    top: ${(props) => (props.clicked ? "0" : "0.8rem")};
+    transform: ${(props) => (props.clicked ? "rotate(-135deg)" : "rotate(0)")};
+  }
+  ${MenuLabel}:hover &::before {
+    top: ${(props) => (props.clicked ? "0" : "-1rem")};
+  }
+  ${MenuLabel}:hover &::after {
+    top: ${(props) => (props.clicked ? "0" : "1rem")};
+  }
+`;
+
+const Navigation = styled.nav`
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 600;
+  width: ${(props) => (props.clicked ? "100%" : "0")};
+  opacity: ${(props) => (props.clicked ? "1" : "0")};
+  transition: width 0.8s, opacity 0.8s;
+`;
+
+const List = styled.ul`
+  position: absolute;
+  list-style: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+`;
+
+export default function Header({childToParent}) {
     const { cartProducts } = useContext(CartContext);
     const [mobileNavActive, setMobileNavActive] = useState(false);
+    const handleClick = () => setMobileNavActive(!mobileNavActive);
+
     const { signed, signout } = useContext(AuthContext);
-    const [open, setOpen] = useState(false);
 
     const handleLogin = () => {
         signout();
     }
 
     const ref = useRef(null);
-    const [search, setSearch] = useState('');
+
+    const updateSearch = (value) => {
+        childToParent(value);
+    }
 
     const handleKeyPress = useCallback((event) => {
         const truefalse = event.key == '/';
         const escKey = event.key == 'Escape';
-        console.log(event.key);
+
         if (truefalse) {
             ref.current.focus()
             event.preventDefault();
@@ -127,9 +262,9 @@ export default function Header() {
         };
     }, [handleKeyPress]);
 
+
     return (
         <StyledHeader>
-            <Center>
                 <Wrapper>
                     <Logo>
                         <Image
@@ -145,9 +280,8 @@ export default function Header() {
                         <form>
                             <StyledSearchText type="text"
                                 ref={ref}
-                                onChange={(e) => setSearch(e.target.value)}
+                                onChange={(e) => updateSearch(e.target.value)}
                                 placeholder="Procurar itens... pressione /"
-                                value={search}
                             >
                             </StyledSearchText>
                         </form>
@@ -155,11 +289,11 @@ export default function Header() {
 
                     <StyledNav style={{ paddingTop: "25px" }}>
                         <NavLink href={'/cart'}>
-                            <BasketIcon/>
+                            <BasketIcon />
                             ({cartProducts.length})
                         </NavLink>
                         <NavLink href={'/help'}>
-                            <HelpIcon/>
+                            <HelpIcon />
                         </NavLink>
                         {!signed && (
                             <NavLink href={'/signin'}>Sign in</NavLink>
@@ -174,10 +308,31 @@ export default function Header() {
                         )}
                     </StyledNav>
 
-                    <NavButton onClick={() => setMobileNavActive(prev => !prev)}>
-
-                    </NavButton>
+                    <MenuLabel htmlFor="navi-toggle" onClick={handleClick}>
+                        <Icon clicked={mobileNavActive}>&nbsp;</Icon>
+                    </MenuLabel>
+                    <NavBackground clicked={mobileNavActive}>&nbsp;</NavBackground>
+                    <Navigation clicked={mobileNavActive}>
+                        <List>
+                            <li>
+                                <ItemLink onClick={handleClick} href="/products">
+                                    Products
+                                </ItemLink>
+                            </li>
+                            <li>
+                                <ItemLink href={'/cart'}>
+                                    Cesta ({cartProducts.length} itens)
+                                </ItemLink>
+                            </li>
+                            <li>
+                                <ItemLink onClick={handleClick} href="/signin">
+                                    Sign in
+                                </ItemLink>
+                            </li>
+                        </List>
+                    </Navigation>
                 </Wrapper>
+
                 <Wrapper style={{ justifyContent: "center" }}>
                     <StyledNav>
                         <NavLink href={'/products'}>Todos os produtos</NavLink>
@@ -185,7 +340,6 @@ export default function Header() {
                         <NavLink href={'/account'}>Conta</NavLink>
                     </StyledNav>
                 </Wrapper>
-            </Center>
         </StyledHeader>
     );
 }

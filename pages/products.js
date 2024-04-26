@@ -5,16 +5,23 @@ import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/Product";
 import ProductsGrid from "@/components/ProductsGrid";
 import Title from "@/components/Title";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "./api/auth/auth";
 
 export default function ProductsPage({ products }) {
+    
+    const [data, setData] = useState('');
+    const childToParent = (childData) => {
+        setData(childData);
+    }
+    
     return (
         <>
-            <Header></Header>
+            <Header childToParent={childToParent}></Header>
             <Center>
                 <Title>Todos os produtos</Title>
-                <ProductsGrid products={products} search={""}></ProductsGrid>
+                {data}
+                <ProductsGrid products={products} search={data}></ProductsGrid>
             </Center>
         </>
     );
