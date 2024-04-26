@@ -6,6 +6,9 @@ const StyledDiv = styled.div`
     padding: 0 20px;
     top: 90px;
     position: relative;
+    @media screen and (min-width: 769px) {
+        top: 120px;
+    }
 `;
 
 export default function Center({children}) {

@@ -75,7 +75,13 @@ export default function ProductBox({ _id, title, description, price, images }) {
     const { signed } = useContext(AuthContext);
 
     const { addProduct, removeProduct } = useContext(CartContext);
+
+    function lessOfThisProduct(productId) {
+        removeProduct(productId);
+    }
+
     const url = '/product/' + _id;
+
     return (
         <ProductWrapper>
             <div>
@@ -83,7 +89,7 @@ export default function ProductBox({ _id, title, description, price, images }) {
                     <div><img src={images?.[0]} alt="" /></div>
                 </WhiteBox>
                 <AddToCartDiv>
-                    <Button block="true" onClick={() => removeProduct(_id)} addToCart={1}>
+                    <Button block="true" onClick={() => lessOfThisProduct(_id)} addToCart={1}>
                         -
                     </Button>
                     <Button block="true" onClick={() => addProduct(_id)} addToCart={1}>
