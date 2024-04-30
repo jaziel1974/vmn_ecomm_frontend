@@ -58,20 +58,21 @@ export const Strong = styled.strong`
 `;
 
 export const DivBlur = styled.div`
+    display: flex;
     width:100%;
-    height:100%;
+    height:100vh;
     background-color: ${background};
     position: absolute;
     left: 0px;
     z-index: 10;
     opacity: 80%;
-    padding-top: 404%
 `;
 
 export const LabelWarning = styled.label`
+    align-self: center;
     text-align: center;
     font-size: 2.5rem;
-    color: #FEBA51;
+    color: #ff3737;
 
 `;
 
@@ -116,7 +117,7 @@ export default function SigninPage() {
             <Header />
             <Center>
                 <DivBlur>
-                    <LabelWarning>Entre em contato pelo whats para se cadastrar</LabelWarning>
+                    <LabelWarning>Por favor, entre em contato pelo whats para se cadastrar</LabelWarning>
                 </DivBlur>
                 <Container>
                     <Content>

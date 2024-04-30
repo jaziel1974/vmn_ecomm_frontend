@@ -315,7 +315,7 @@ export default function Header({childToParent}) {
                         <List>
                             <li>
                                 <ItemLink onClick={handleClick} href="/products">
-                                    Products
+                                    Todos os produtos
                                 </ItemLink>
                             </li>
                             <li>
