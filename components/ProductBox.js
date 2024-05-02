@@ -71,7 +71,7 @@ const Price = styled.div`
     }    
 `;
 
-export default function ProductBox({ _id, title, description, price, images }) {
+export default function ProductBox({ _id, title, description, price, images, stockAvailable }) {
     const { signed } = useContext(AuthContext);
 
     const { addProduct, removeProduct } = useContext(CartContext);
@@ -100,9 +100,14 @@ export default function ProductBox({ _id, title, description, price, images }) {
             <ProductInfoBox>
                 <Title href={url}>{title}</Title>
                 <PriceRow>
-                    {signed && (
+                    {signed && stockAvailable && (
                         <Price>
                             ${price}
+                        </Price>
+                    )}
+                    {signed && !stockAvailable && (
+                        <Price>
+                            Indisponível
                         </Price>
                     )}
                 </PriceRow>
