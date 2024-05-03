@@ -62,7 +62,11 @@ const StyledNav = styled.nav`
 
 const NavLink = styled(Link)`
     display: flex;
-    color:#FEBA51;
+    ${props => props.inactive ? `
+        color: grey;
+    ` : `
+        color:#FEBA51;
+    `}
     text-decoration:none;
     @media screen and (min-width: 768px) {
         padding:0;
@@ -334,9 +338,9 @@ export default function Header({childToParent}) {
 
                 <Wrapper style={{ justifyContent: "center" }}>
                     <StyledNav>
-                        <NavLink href={'/products'}>Todos os produtos</NavLink>
-                        <NavLink href={'/categories'}>Categorias</NavLink>
-                        <NavLink href={'/account'}>Conta</NavLink>
+                        <NavLink href={'/products'} inactive={false}>Todos os produtos</NavLink>
+                        <NavLink href={''} inactive={true}>Categorias</NavLink>
+                        <NavLink href={''} inactive={true}>Conta</NavLink>
                     </StyledNav>
                 </Wrapper>
         </StyledHeader>

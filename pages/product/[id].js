@@ -45,7 +45,7 @@ export default function ProductPage({ product }) {
                     </WhiteBox>
                     <div>
                         <Title>{product.title}</Title>
-                        <p>{product.description}</p>
+                        <p style={{whiteSpace: "pre-line"}}>{product.description}</p>
                         <PriceRow>
                             <div>
                                 {signed && (
