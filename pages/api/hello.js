@@ -9,7 +9,6 @@ export default function handler(req, res) {
 
   useEffect(() => {
     if (client) {
-      console.log(client)
       client.on('connect', () => {
         setConnectStatus('Connected');
       });
@@ -32,7 +31,6 @@ export default function handler(req, res) {
       const { topic, qos } = subscription;
       client.subscribe(topic, { qos }, (error) => {
         if (error) {
-          console.log('Subscribe to topics error', error)
           return
         }
         setIsSub(true)
@@ -45,7 +43,6 @@ export default function handler(req, res) {
       const { topic } = subscription;
       client.unsubscribe(topic, error => {
         if (error) {
-          console.log('Unsubscribe error', error)
           return
         }
         setIsSub(false);
@@ -58,7 +55,6 @@ export default function handler(req, res) {
       const { topic, qos, payload } = context;
       client.publish(topic, payload, { qos }, error => {
         if (error) {
-          console.log('Publish error: ', error);
         }
       });
     }

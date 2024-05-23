@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import ProductBox from "@/components/ProductBox";
+import { getPrice } from "../pages/products";
 
 const StyledProductsGrid = styled.div`
     display: flex;
@@ -15,6 +16,7 @@ export default function ProductsGrid({ products, search }) {
                 {products?.length > 0 && products.filter((pr) => {
                     return search?.toLowerCase() === '' ? pr : pr.title.toLowerCase().includes(search?.toLowerCase());
                 }).map(product => (
+                    product.price = getPrice(product),
                     <ProductBox key={product._id} {...product}>{product.title}</ProductBox>
                 ))}
             </StyledProductsGrid>

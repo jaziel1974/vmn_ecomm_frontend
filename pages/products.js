@@ -51,13 +51,12 @@ export function getPrice(product) {
                 price => {
                     return price.name == user.user.data.priceId;
                 })
-            if (zonedPrice > 0) {
+            if (zonedPrice.length > 0) {
                 return zonedPrice[0].values;
             }
             return product.price;
         }
         return product.price;
     }
-    console.log(product);
     return product.price;
 }
