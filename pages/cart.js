@@ -9,6 +9,7 @@ import Table from "@/components/Table";
 import Input from "@/components/Input";
 import { AuthContext } from "./api/auth/auth";
 import { getPrice } from "./products";
+import emailjs from "@emailjs/browser";
 
 const ColumnsWrapper = styled.div`
     display: grid;
@@ -82,6 +83,8 @@ export default function CartPage() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [priceId, setPriceId] = useState(user?.user.data.priceId);
 
+    const emailId = process.env.EMAIL_PUBLIC_ID;
+
     useEffect(() => {
         if (cartProducts.length > 0) {
             axios.post('/api/cart', { ids: cartProducts })
@@ -112,6 +115,7 @@ export default function CartPage() {
     function alternativePayment() {
         clearCart();
         setIsSuccess(true);
+        sendEmail();
     }
 
     function moreOfThisProduct(productId) {
@@ -143,6 +147,19 @@ export default function CartPage() {
         }
         alternativePayment();
     }
+
+    const sendEmail = () => {
+        emailjs.init({publicKey:"HXShmzwK6-xv5wPet"});
+        emailjs.send("service_0svlota", 'template_akp3tfc', {
+            from_name: user.email,
+        }).then(
+            (response) => {
+                console.log('SUCCESS!', response.status, response.text);
+            },
+            (error) => {
+                console.log('FAILED...', error);
+            });
+    };
 
     let total = 0;
     if (products.length > 0) {
