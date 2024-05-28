@@ -21,8 +21,11 @@ export const AuthProvider = ({ children }) => {
 
     const signin = async (email, password) => {
         const user = await axios.get('/api/users?email=' + email);
-        console.log(user);
+        const customer = await axios.get('/api/customers?email=' + email);
+
         const userData = user?.data;
+        userData.priceId = customer?.data?.priceId;
+
         const hasUser = userData?.email === email;
         const encrPass = encrypt(password);
 

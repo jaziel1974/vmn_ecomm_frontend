@@ -7,7 +7,8 @@ export default async function handle(req, res) {
 
     if (method === 'GET') {
         if (req.query?.email) {
-            res.json(await Customer.findOne({ email: req.query.email }));
+            var data = await Customer.findOne({ email: req.query.email });
+            res.json(data);
         }
         else{
             res.json(false);

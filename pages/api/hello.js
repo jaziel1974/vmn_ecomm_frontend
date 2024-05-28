@@ -20,7 +20,6 @@ export default async function handler(req, res) {
     const data = await Customer.find({}, { name: 1, email: 1, _id: 0 });
     
     data.map((data) => {
-      console.log('updatePassword');
       User.updateOne({ email: data.email }, { password: encrypt('1234')})
         .then((data) => {
           console.log(data);
