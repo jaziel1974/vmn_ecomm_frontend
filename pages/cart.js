@@ -9,7 +9,7 @@ import Table from "@/components/Table";
 import Input from "@/components/Input";
 import { AuthContext } from "./api/auth/auth";
 import { getPrice } from "./products";
-import emailjs from "@emailjs/browser";
+import {sendEmail} from "../shared/mail";
 
 const ColumnsWrapper = styled.div`
     display: grid;
@@ -45,7 +45,7 @@ const ProductImageBox = styled.div`
         max-height: 60px;
     }
     @media screen and (min-width: 768px) {
-padding: 10px;
+        padding: 10px;
         width: 100px;
         height: 100px;    
                 img{
@@ -83,7 +83,6 @@ export default function CartPage() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [priceId, setPriceId] = useState(user?.user.data.priceId);
 
-    const emailId = process.env.EMAIL_PUBLIC_ID;
 
     useEffect(() => {
         if (cartProducts.length > 0) {
@@ -115,7 +114,7 @@ export default function CartPage() {
     function alternativePayment() {
         clearCart();
         setIsSuccess(true);
-        sendEmail();
+        sendEmail(user.email, "template_akp3tfc");
     }
 
     function moreOfThisProduct(productId) {
@@ -147,19 +146,6 @@ export default function CartPage() {
         }
         alternativePayment();
     }
-
-    const sendEmail = () => {
-        emailjs.init({publicKey:"HXShmzwK6-xv5wPet"});
-        emailjs.send("service_0svlota", 'template_akp3tfc', {
-            from_name: user.email,
-        }).then(
-            (response) => {
-                console.log('SUCCESS!', response.status, response.text);
-            },
-            (error) => {
-                console.log('FAILED...', error);
-            });
-    };
 
     let total = 0;
     if (products.length > 0) {

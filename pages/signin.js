@@ -1,3 +1,4 @@
+import axios from "axios";
 import Button from '@/components/Button';
 import ButtonLink from '@/components/ButtonLink';
 import Center from '@/components/Center';
@@ -7,6 +8,7 @@ import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation'
 import { AuthContext } from './api/auth/auth';
+import { encrypt } from '../shared/crypto';
 
 export const Container = styled.div`
     display: flex;
@@ -63,7 +65,6 @@ export default function SigninPage() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [verificationCode, setVerificationCode] = useState('');
     const [isPasswordRecovery, setIsPasswordRecovery] = useState(false);
     const [error, setError] = useState('');
 
@@ -82,19 +83,16 @@ export default function SigninPage() {
             });
     }
 
-    const handlePasswordReset = (email, verificationCode) => {
+    const handlePasswordReset = (email) => {
         if (!email) {
             setError('Preencha o e-mail');
             return;
         }
-        //const res = axios.get('/api/logging?email=')
-        const res = true;
+        const passEncrypted = encrypt(password);
+        const res = axios.patch('/api/users', { email, password: passEncrypted });
         if (res) {
             setIsPasswordRecovery(false);
-            router.push('/signup');
-        }
-        else {
-            setError('Não foi possível validar o código informado. Por favor, tente novamente.')
+            setError('Senha alterada com sucesso');
         }
     }
 
@@ -108,15 +106,14 @@ export default function SigninPage() {
                         <Input placeholder="Senha" type="password" value={password} onChange={e => [setPassword(e.target.value), setError('')]}></Input>
                         {isPasswordRecovery && (
                             <div>
-                                <Input placeholder="Código de verificação" type="number" value={verificationCode}></Input>
-                                <Button onClick={e => handlePasswordReset(email, verificationCode)}>Ok</Button>
+                                <Button onClick={e => handlePasswordReset(email)}>Redefinir senha</Button>
                             </div>
                         )}
                         <LabelError>{error}</LabelError>
                         <Button black block onClick={handleLogin}>Entrar (ENTER)</Button>
                         <div style={{textAlign: "center"}}>
                             <LabelSignup>Não possui uma conta?</LabelSignup>
-                            <ButtonLink href="/signup" black={1}>Cadastre-se</ButtonLink>
+                            <ButtonLink href="/signup" black={1} style={{marginLeft: "15px"}}>Cadastre-se</ButtonLink>
                         </div>
                         {!isPasswordRecovery && (
                             <Button black={1} onClick={e => setIsPasswordRecovery(true)}>Redefinir senha</Button>

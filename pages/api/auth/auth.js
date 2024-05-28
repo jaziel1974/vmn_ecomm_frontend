@@ -1,8 +1,6 @@
-import { mongooseConnect } from "@/lib/mongoose";
-import { Customer } from "@/models/Customer";
-import { CustomerHold } from "@/models/CustomerHold";
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
+import { encrypt } from "../../../shared/crypto";
 
 export const AuthContext = createContext({});
 
@@ -22,12 +20,14 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const signin = async (email, password) => {
-        const user = await axios.get('/api/customers?email=' + email);
+        const user = await axios.get('/api/users?email=' + email);
+        console.log(user);
         const userData = user?.data;
         const hasUser = userData?.email === email;
+        const encrPass = encrypt(password);
 
         if (hasUser) {
-            if (user.data.email === email /*&& user.data.password === password*/) {
+            if (user.data.email === email && user.data?.password === encrPass) {
                 const token = Math.random().toString(36).substring(2);
                 localStorage.setItem('user_token', JSON.stringify({ email, token }));
                 setUser({ email, password, user });
@@ -42,15 +42,22 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const signup = async (name, email, password) => {
+    const signup = async (name, email, phoneNumber, password) => {
         const responseHold = await axios.get('/api/customershold?email=' + email);
         const hasUserHold = responseHold?.data?.email === email;
         if (hasUserHold) {
             return 'Solicitação de cadastro já existe. Por favor, aguarde a liberação ou entre em contato pelo WhatsApp.';
         }
+        const responseCustomer = await axios.get('/api/customers?email=' + email);
+        const hasUser = responseCustomer?.data?.email === email;
+        if (hasUser) {
+            return 'Usuário ja existe';
+        }
+
         return await axios.post('/api/customershold', {
             name: name,
             email: email,
+            phoneNumber: phoneNumber,
             password: password
         })
     };

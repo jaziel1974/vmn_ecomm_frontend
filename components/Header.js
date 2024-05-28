@@ -2,7 +2,6 @@ import Link from "next/link";
 import styled from "styled-components";
 import { CartContext } from "@/components/CartContext";
 import { AuthContext } from "@/pages/api/auth/auth";
-import Image from 'next/image'
 import { useContext, useCallback, useEffect, useRef, useState } from "react";
 import HelpIcon from "./icons/Help";
 import BasketIcon from "./icons/Bakset";
@@ -24,8 +23,20 @@ const StyledHeader = styled.header`
 `;
 
 const Logo = styled.div`
-    color:#fff;
     text-decoration:none;
+    margin-left: 8px;
+`;
+
+const LogoImage = styled.img`
+    padding-top: 13px;
+    @media screen and (max-width: 768px) {
+        height: 42px;
+        width: 42px;
+    }
+    @media screen and (min-width: 769px) {
+        height: 62px;
+        width: 62px;
+    }
 `;
 
 const Wrapper = styled.div`
@@ -33,7 +44,7 @@ const Wrapper = styled.div`
     justify-content: space-between;
     @media screen and (max-width: 768px) {
         justify-content: flex-start;
-        column-gap: 30px;
+        column-gap: 40px;
     }
 `;
 
@@ -77,7 +88,7 @@ const NavLink = styled(Link)`
 
 const ItemLink = styled(Link)`
   display: inline-block;
-  font-size: 2.2rem;
+  font-size: 1rem;
   font-weight: 300;
   text-decoration: none;
   color: ${COLORS.primaryLight};
@@ -117,11 +128,12 @@ const NavButton = styled.button`
 
 
 const StyledSearchGrid = styled.div`
+    align-self: center;
     @media screen and (min-width: 769px) {
         width: 60%;
     }
     @media screen and (max-width: 768px) {
-        width: 40%;
+        width: 50%;
         color: green;
     }
 `;
@@ -142,11 +154,11 @@ const MenuLabel = styled.label`
     }
     background-color: ${background};
     position: fixed;
-    top: 1rem;
-    right: 1rem;
+    top: 0.5rem;
+    right: 0.5rem;
     border-radius: 50%;
-    height: 4rem;
-    width: 4rem;
+    height: 3rem;
+    width: 3rem;
     cursor: pointer;
     z-index: 1000;
     box-shadow: 0 1rem 3rem rgba(182, 237, 200, 0.3);
@@ -172,16 +184,16 @@ const NavBackground = styled.div`
 const Icon = styled.span`
   position: relative;
   background-color: ${(props) => (props.clicked ? "transparent" : "#FEBA51")};
-  width: 2rem;
+  width: 1.4rem;
   height: 2px;
   display: inline-block;
-  margin-top: 2rem;
+  margin-top: 1.4rem;
   transition: all 0.3s;
   &::before,
   &::after {
     content: "";
     background-color: #FEBA51;
-    width: 2rem;
+    width: 1.4rem;
     height: 2px;
     display: inline-block;
     position: absolute;
@@ -197,10 +209,10 @@ const Icon = styled.span`
     transform: ${(props) => (props.clicked ? "rotate(-135deg)" : "rotate(0)")};
   }
   ${MenuLabel}:hover &::before {
-    top: ${(props) => (props.clicked ? "0" : "-1rem")};
+    top: ${(props) => (props.clicked ? "0" : "-0.7rem")};
   }
   ${MenuLabel}:hover &::after {
-    top: ${(props) => (props.clicked ? "0" : "1rem")};
+    top: ${(props) => (props.clicked ? "0" : "0.7rem")};
   }
 `;
 
@@ -223,12 +235,20 @@ const List = styled.ul`
   transform: translate(-50%, -50%);
   text-align: center;
   width: 100%;
+  padding-left: 0;
 `;
 
-export default function Header({childToParent}) {
+export default function Header({ childToParent }) {
     const { cartProducts } = useContext(CartContext);
     const [mobileNavActive, setMobileNavActive] = useState(false);
     const handleClick = () => setMobileNavActive(!mobileNavActive);
+
+    const signoutClick = (e) => {
+        e.preventDefault();
+        setMobileNavActive(!mobileNavActive);
+        handleLogin();
+    }
+
 
     const { signed, signout } = useContext(AuthContext);
 
@@ -268,81 +288,93 @@ export default function Header({childToParent}) {
 
     return (
         <StyledHeader>
-                <Wrapper>
-                    <Logo>
-                        <Image
-                            src='/logo.png'
-                            alt='Verde Musgo Natural'
-                            height='72'
-                            width='76'
-                            style={{ paddingTop: "13px" }}
-                        />
-                    </Logo>
+            <Wrapper>
+                <Logo>
+                    <LogoImage
+                        src='/logo.png'
+                        alt='Verde Musgo Natural'
+                    />
+                </Logo>
 
-                    <StyledSearchGrid style={{ paddingTop: "20px" }}>
-                        <form>
-                            <StyledSearchText type="text"
-                                ref={ref}
-                                onChange={(e) => updateSearch(e.target.value)}
-                                placeholder="Procurar itens... pressione /"
-                            >
-                            </StyledSearchText>
-                        </form>
-                    </StyledSearchGrid>
+                <StyledSearchGrid>
+                    <form>
+                        <StyledSearchText type="text"
+                            ref={ref}
+                            onChange={(e) => updateSearch(e.target.value)}
+                            placeholder="Procurar itens... pressione /"
+                        >
+                        </StyledSearchText>
+                    </form>
+                </StyledSearchGrid>
 
-                    <StyledNav style={{ paddingTop: "25px" }}>
-                        <NavLink href={'/cart'}>
-                            <BasketIcon />
-                            ({cartProducts.length})
+                <StyledNav style={{ paddingTop: "25px" }}>
+                    <NavLink href={'/cart'}>
+                        <BasketIcon />
+                        ({cartProducts.length})
+                    </NavLink>
+                    <NavLink href={'/help'}>
+                        <HelpIcon />
+                    </NavLink>
+                    {!signed && (
+                        <NavLink href={'/signin'}>Sign in</NavLink>
+                    )}
+                    {signed && (
+                        <NavLink href=''
+                            onClick={e => {
+                                e.preventDefault();
+                                handleLogin();
+                            }}>Sign out
                         </NavLink>
-                        <NavLink href={'/help'}>
-                            <HelpIcon />
-                        </NavLink>
-                        {!signed && (
-                            <NavLink href={'/signin'}>Sign in</NavLink>
-                        )}
-                        {signed && (
-                            <NavLink href=''
-                                onClick={e => {
-                                    e.preventDefault();
-                                    handleLogin();
-                                }}>Sign out
-                            </NavLink>
-                        )}
-                    </StyledNav>
+                    )}
+                </StyledNav>
 
-                    <MenuLabel htmlFor="navi-toggle" onClick={handleClick}>
-                        <Icon clicked={mobileNavActive}>&nbsp;</Icon>
-                    </MenuLabel>
-                    <NavBackground clicked={mobileNavActive}>&nbsp;</NavBackground>
-                    <Navigation clicked={mobileNavActive}>
-                        <List>
-                            <li>
-                                <ItemLink onClick={handleClick} href="/products">
-                                    Todos os produtos
+                <MenuLabel htmlFor="navi-toggle" onClick={handleClick}>
+                    <Icon clicked={mobileNavActive}>&nbsp;</Icon>
+                </MenuLabel>
+
+                <NavBackground clicked={mobileNavActive}>&nbsp;</NavBackground>
+                <Navigation clicked={mobileNavActive}>
+                    <List>
+                        <li>
+                            <ItemLink onClick={handleClick} href="/products">
+                                Todos os produtos
+                            </ItemLink>
+                        </li>
+                        <li>
+                            <ItemLink href={'/cart'}>
+                                Cesta ({cartProducts.length} iten(s))
+                            </ItemLink>
+                        </li>
+                        <li>
+                            {signed && (
+                                <ItemLink onClick={handleClick} href="/myaccount">
+                                    Conta
                                 </ItemLink>
-                            </li>
-                            <li>
-                                <ItemLink href={'/cart'}>
-                                    Cesta ({cartProducts.length} itens)
-                                </ItemLink>
-                            </li>
-                            <li>
+                            )}
+                        </li>
+                        <li>
+                            {!signed && (
                                 <ItemLink onClick={handleClick} href="/signin">
                                     Sign in
                                 </ItemLink>
-                            </li>
-                        </List>
-                    </Navigation>
-                </Wrapper>
+                            )}
+                            {signed && (
+                                <ItemLink onClick={(e) => signoutClick(e)} href="">
+                                    Sign out
+                                </ItemLink>
+                            )}
+                        </li>
+                    </List>
+                </Navigation>
+            </Wrapper>
 
-                <Wrapper style={{ justifyContent: "center" }}>
-                    <StyledNav>
-                        <NavLink href={'/products'} inactive={false}>Todos os produtos</NavLink>
-                        <NavLink href={''} inactive={true}>Categorias</NavLink>
-                        <NavLink href={''} inactive={true}>Conta</NavLink>
-                    </StyledNav>
-                </Wrapper>
+            <Wrapper style={{ justifyContent: "center" }}>
+                <StyledNav>
+                    <NavLink href={'/products'} inactive={false}>Todos os produtos</NavLink>
+                    <NavLink href={''} inactive={true}>Categorias</NavLink>
+                    {signed && (<NavLink href={'/myaccount'} >Conta</NavLink>)}
+                </StyledNav>
+            </Wrapper>
         </StyledHeader>
     );
 }

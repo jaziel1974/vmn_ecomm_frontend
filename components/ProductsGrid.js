@@ -14,7 +14,7 @@ export default function ProductsGrid({ products, search }) {
         <div>
             <StyledProductsGrid>
                 {products?.length > 0 && products.filter((pr) => {
-                    return search?.toLowerCase() === '' ? pr : pr.title.toLowerCase().includes(search?.toLowerCase());
+                    return search?.toLowerCase() === '' ? pr : pr.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(search?.toLowerCase());
                 }).map(product => (
                     product.price = getPrice(product),
                     <ProductBox key={product._id} {...product}>{product.title}</ProductBox>

@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { AuthContext } from "@/pages/api/auth/auth";
 
 const ProductWrapper = styled.div`
-    width: 150px;
+    width: 200px;
 `;
 
 const AddToCartDiv = styled.div`
@@ -25,7 +25,7 @@ const AddToCartDiv = styled.div`
 const WhiteBox = styled(Link)`
     background-color: #fff;
     padding: 20px;
-    height: 120px;
+    height: 150px;
     text-align: center;
     display: flex;
     align-items: center;

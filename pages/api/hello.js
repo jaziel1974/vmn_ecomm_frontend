@@ -1,72 +1,34 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { mongooseConnect } from "@/lib/mongoose";
+import { Customer } from "@/models/Customer";
+import { User } from "@/models/User";
+import { encrypt } from "@/shared/crypto";
 
-export default function handler(req, res) {
-  const [client, setClient] = useState(null);
-  const mqttConnect = (host, mqttOption) => {
-    setConnectStatus('Connecting');
-    setClient(mqtt.connect(host, mqttOption));
-  };
+export default async function handler(req, res) {
+  const { method } = req;
+  await mongooseConnect();
 
-  useEffect(() => {
-    if (client) {
-      client.on('connect', () => {
-        setConnectStatus('Connected');
-      });
-      client.on('error', (err) => {
-        console.error('Connection error: ', err);
-        client.end();
-      });
-      client.on('reconnect', () => {
-        setConnectStatus('Reconnecting');
-      });
-      client.on('message', (topic, message) => {
-        const payload = { topic, message: message.toString() };
-        setPayload(payload);
-      });
-    }
-  }, [client]);
+  if (method === 'GET' && req.query?.type === 'migrateEmails') {
+    const data = await Customer.find({}, { name: 1, email: 1, _id: 0 });
 
-  const mqttSub = (subscription) => {
-    if (client) {
-      const { topic, qos } = subscription;
-      client.subscribe(topic, { qos }, (error) => {
-        if (error) {
-          return
-        }
-        setIsSub(true)
-      });
-    }
-  };
-
-  const mqttUnSub = (subscription) => {
-    if (client) {
-      const { topic } = subscription;
-      client.unsubscribe(topic, error => {
-        if (error) {
-          return
-        }
-        setIsSub(false);
-      });
-    }
-  };
-
-  const mqttPublish = (context) => {
-    if (client) {
-      const { topic, qos, payload } = context;
-      client.publish(topic, payload, { qos }, error => {
-        if (error) {
-        }
-      });
-    }
+    data.map((data) => {
+      User.create({ email: data.email, name: data.name });
+    });
+    res.json('done');
   }
 
-  const mqttDisconnect = () => {
-    if (client) {
-      client.end(() => {
-        setConnectStatus('Connect');
-      });
-    }
+  if (method === 'GET' && req.query?.type === 'updatePassword') {
+    const data = await Customer.find({}, { name: 1, email: 1, _id: 0 });
+    
+    data.map((data) => {
+      console.log('updatePassword');
+      User.updateOne({ email: data.email }, { password: encrypt('1234')})
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    });
+    res.json('done');
   }
-  
-  res.status(200).json({ name: 'John Doe' })
 }

@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/navigation'
 import { AuthContext } from './api/auth/auth';
 import {background} from "@/lib/colors";
+import { sendEmail } from '@/shared/mail';
 
 export const Container = styled.div`
     display: flex;
@@ -84,11 +85,12 @@ export default function SigninPage() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [emailConfirm, setEmailConfirm] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
     const handleSignup = () => {
-        if (!name | !email | !emailConfirm | !password) {
+        if (!name | !email | !emailConfirm | !phoneNumber | !password) {
             setError('Preencha todos os campos');
             return;
         } else if (email !== emailConfirm) {
@@ -96,10 +98,11 @@ export default function SigninPage() {
             return;
         }
 
-        signup(name, email, password)
+        signup(name, email, phoneNumber, password)
             .then(res => {
                 if (res?.data){
-                    setError("Solicitação de cadastro realizada. Por favor, avise-nos pelo WhatsApp o e-mail cadastrado. Responderemos o mais rápido possível.");
+                    sendEmail(email, "template_20efba4");
+                    setError("Solicitação de cadastro realizada. Por favor, verifique o seu e-mail para ativar sua conta.");
                 }
                 else{
                     setError(res);
@@ -110,20 +113,16 @@ export default function SigninPage() {
             })
     }
 
-
-
     return (
         <>
             <Header />
             <Center>
-                <DivBlur>
-                    <LabelWarning>Por favor, entre em contato pelo whats para se cadastrar</LabelWarning>
-                </DivBlur>
                 <Container>
                     <Content>
                         <Input placeholder="Nome" type="name" value={name} onChange={e => [setName(e.target.value), setError('')]}></Input>
                         <Input placeholder="E-mail" type="email" value={email} onChange={e => [setEmail(e.target.value), setError('')]}></Input>
                         <Input placeholder="Confirme seu e-mail" type="email" value={emailConfirm} onChange={e => [setEmailConfirm(e.target.value), setError('')]}></Input>
+                        <Input placeholder="Telefone" type="phoneNumber" value={phoneNumber} onChange={e => [setPhoneNumber(e.target.value), setError('')]}></Input>
                         <Input placeholder="Senha" type="password" value={password} onChange={e => [setPassword(e.target.value), setError('')]}></Input>
                         <LabelError>{error}</LabelError>
                         <Button black block onClick={handleSignup}>Cadastrar</Button>

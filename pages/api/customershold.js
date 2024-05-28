@@ -1,5 +1,6 @@
 import { mongooseConnect } from "@/lib/mongoose";
 import { CustomerHold } from "@/models/CustomerHold";
+import { encrypt } from "../../shared/crypto";
 
 export default async function handle(req, res) {
     const { method } = req;
@@ -9,14 +10,16 @@ export default async function handle(req, res) {
         const {
             name,
             email,
-            password
+            phoneNumber,
+            password,
         } = req.body;
 
         if (email) {
             res.json(await CustomerHold.create({
                 name: name,
                 email: email,
-                password: password
+                phoneNumber: phoneNumber,
+                password: encrypt(password)
             }
             ));
         }
