@@ -372,9 +372,9 @@ export default function Header({ childToParent }) {
                 <StyledNav>
                     <NavLink href={'/products'} inactive={false}>Todos os produtos</NavLink>
                     <NavLink href={''} inactive={true}>Categorias</NavLink>
-                    {signed && (<NavLink href={'/myaccount'} >Conta</NavLink>)}
+                    {signed && (<NavLink href={'/myAccount'} >Conta</NavLink>)}
                 </StyledNav>
             </Wrapper>
         </StyledHeader>
-    );
+    )
 }
