@@ -1,4 +1,3 @@
-import Center from "@/components/Center";
 import Header from "@/components/Header";
 import Link from "next/link";
 import styled, { css } from "styled-components";
@@ -13,6 +12,44 @@ const COLORS = {
     primaryDark: "#1B422E",
     primaryLight: "#FEBA51",
 };
+
+const Center = styled.div`
+    margin: 0 auto;
+    top: 90px;
+    position: relative;
+    @media screen and (min-width: 769px) {
+        top: 120px;
+    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+const Wrapper = styled.div`
+    width: 100vw;
+    flex-wrap: wrap;
+    position: relative;
+    display: flex;
+    @media screen and (max-width: 768px) {
+        justify-content: flex-start;
+        column-gap: 40px;
+    }
+`;
+
+const Menu = styled.div`
+    width: 100vw;
+    background-color: ${COLORS.primaryLight};
+`;
+
+const Side = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    height: 100vh;
+    gap: 50px;
+    position: relative;
+    width: 100vw;
+`;
 
 export const ErrorContent = styled.div`
     width: 100%;
@@ -56,25 +93,6 @@ export const OrderDetailText = styled.span`
     color: ${COLORS.primaryDark};
 `;
 
-const Wrapper = styled.div`
-    gap: 40px;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    position: relative;
-    left: -20px;
-    display: flex;
-    justify-content: flex-start;
-    @media screen and (max-width: 768px) {
-        justify-content: flex-start;
-        column-gap: 40px;
-    }
-`
-
-const Menu = styled.div`
-    height: 100vh;
-    background-color: ${background};
-`;
-
 const StyledNav = styled.nav`
     display: block;
     gap: 15px;
@@ -97,11 +115,14 @@ const NavLink = styled(Link)`
     ${props => props.color === 'normal' && css`
         color:#FEBA51;
     `}
-    text-decoration:none;
+    ${props => props.color === 'dark' && css`
+        color:${COLORS.primaryDark};
+    `}
     padding-top:10px;
     height: 25px;
     padding-left: 20px;
     padding-right: 20px;
+    font-weight: bold;
 `;
 
 export default function MyAccount({ childToParent }) {
@@ -149,65 +170,66 @@ export default function MyAccount({ childToParent }) {
                 <Wrapper >
                     <Menu>
                         <StyledNav>
-                            <NavLink color={"normal"} href={'#'} onClick={(e) => refreshOrders(e)}>
+                            <NavLink color={"dark"} href={'#'} onClick={(e) => refreshOrders(e)}>
                                 Meus pedidos
                             </NavLink>
                         </StyledNav>
                     </Menu>
-                    <OrderTitleDiv>
-                        {orders.length > 0 && (
-                            <OrderTitle>Lista de pedidos</OrderTitle>
-                        )}
-                        <Table>
-                            <tbody>
-                                {orders && orders.map((order) => (
-                                    <tr style={{ listStyleType: 'none' }} key={order._id}>
-                                        <td><NavLink color={"grey"} href={'#'} onClick={(e) => selectOrder(order._id)}>Pedido de {format(order.createdAt, 'dd/MM/yyyy')}</NavLink></td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                        <ul>
-                        </ul>
-                    </OrderTitleDiv>
-                    <OrderTitleDiv>
-                        {order && (
-                            <>
-                                <OrderTitle>Detalhes do pedido</OrderTitle>
-                                <OrderDetailText>Data: {format(order.createdAt, 'dd/MM/yyyy')}</OrderDetailText>
-                                <OrderDetailText>Pago: {order.paid ? 'Sim' : 'Não'}</OrderDetailText>
-                                <OrderDetailText>Status: entregue</OrderDetailText>
-                            </>
-                        )}
-                        {order && (
+                    <Side>
+                        <OrderTitleDiv>
+                            {orders.length > 0 && (
+                                <OrderTitle>Lista de pedidos</OrderTitle>
+                            )}
                             <Table>
-                                <thead style={{ height: 30 }}>
-                                    <tr >
-                                        <th>Produto</th>
-                                        <th>Quantidade</th>
-                                        <th>Preço</th>
-                                    </tr>
-                                </thead>
-                                < tbody >
-                                    {order.line_items.map((product) => (
-                                        <tr>
-                                            <td>
-                                                {product.name}
-                                            </td>
-                                            <td style={{ textAlign: "center" }}>
-                                                {product.quantity}
-                                            </td>
-                                            <td style={{ textAlign: "center" }}>
-                                                {product.unit_amount}
-                                            </td>
+                                <tbody>
+                                    {orders && orders.map((order) => (
+                                        <tr style={{ listStyleType: 'none' }} key={order._id}>
+                                            <td><NavLink color={"grey"} href={'#'} onClick={(e) => selectOrder(order._id)}>Pedido de {format(order.createdAt, 'dd/MM/yyyy')}</NavLink></td>
                                         </tr>
                                     ))}
-                                    <tr>-----------------------</tr>
-                                    <tr colspan="3">Total: {orderTotal}</tr>
                                 </tbody>
                             </Table>
-                        )}
-                    </OrderTitleDiv>
+                            <ul>
+                            </ul>
+                        </OrderTitleDiv>
+                        <OrderTitleDiv style={{ flexGrow: 1 }}>
+                            {order && (
+                                <>
+                                    <OrderTitle>Detalhes do pedido</OrderTitle>
+                                    <Table>
+                                        <thead style={{ height: 30 }}>
+                                            <tr >
+                                                <th style={{ width: "60%" }}>Produto</th>
+                                                <th>Quantidade</th>
+                                                <th>Preço</th>
+                                            </tr>
+                                        </thead>
+                                        < tbody >
+                                            {order.line_items.map((product) => (
+                                                <tr>
+                                                    <td>
+                                                        {product.name}
+                                                    </td>
+                                                    <td style={{ textAlign: "center" }}>
+                                                        {product.quantity}
+                                                    </td>
+                                                    <td style={{ textAlign: "center" }}>
+                                                        {product.unit_amount}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            <tr>-----------------------</tr>
+                                            <tr colspan="3">Total: {orderTotal}</tr>
+                                        </tbody>
+                                    </Table>
+                                    <br />
+                                    <OrderDetailText>Data: {format(order.createdAt, 'dd/MM/yyyy')}</OrderDetailText>
+                                    <OrderDetailText>Pago: {order.paid ? 'Sim' : 'Não'}</OrderDetailText>
+                                    <OrderDetailText>Status: entregue</OrderDetailText>
+                                </>
+                            )}
+                        </OrderTitleDiv>
+                    </Side>
                 </Wrapper >
             </Center >
         </>
