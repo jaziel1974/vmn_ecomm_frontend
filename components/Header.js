@@ -347,7 +347,7 @@ export default function Header({ childToParent }) {
                         </li>
                         <li>
                             {signed && (
-                                <ItemLink onClick={handleClick} href="/myaccount">
+                                <ItemLink onClick={handleClick} href="/myAccount">
                                     Conta
                                 </ItemLink>
                             )}
