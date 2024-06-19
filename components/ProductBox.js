@@ -88,6 +88,7 @@ export default function ProductBox({ _id, title, description, price, images, sto
                 <WhiteBox href={url}>
                     <div><img src={images?.[0]} alt="" /></div>
                 </WhiteBox>
+                {signed && stockAvailable && (
                 <AddToCartDiv>
                     <Button block="true" onClick={() => lessOfThisProduct(_id)} addToCart={1}>
                         -
@@ -96,6 +97,7 @@ export default function ProductBox({ _id, title, description, price, images, sto
                         +
                     </Button>
                 </AddToCartDiv>
+                )}
             </div>
             <ProductInfoBox>
                 <Title href={url}>{title}</Title>

@@ -8,6 +8,12 @@ import Title from "@/components/Title";
 import { useContext, useState } from "react";
 import { AuthContext } from "./api/auth/auth";
 
+const StyledParagraph = styled.p`
+    color: chocolate;
+    font-weight: 700;
+`;
+
+
 export default function ProductsPage({ products }) {
     const { signed, user } = useContext(AuthContext);
     const [data, setData] = useState('');
@@ -21,7 +27,7 @@ export default function ProductsPage({ products }) {
             <Center>
                 <Title>Todos os produtos</Title>
                 {!signed &&
-                    <p>Registre-se para ver o preço</p>
+                    <StyledParagraph>Registre-se para ver o preço e adicionar itens à sacola.</StyledParagraph>
                 }
                 <ProductsGrid products={products} search={data}></ProductsGrid>
             </Center>
