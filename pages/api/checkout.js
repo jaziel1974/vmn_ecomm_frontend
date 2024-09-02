@@ -17,6 +17,8 @@ export default async function handler(req, res) {
         country,
         cartProducts,
         priceId,
+        customerNotes,
+        adminNotes,
     } = req.body;
 
     await mongooseConnect();
@@ -67,7 +69,9 @@ export default async function handler(req, res) {
         postalCode,
         streetAddress,
         country,
-        paid: false
+        paid: false,
+        adminNotes,
+        customerNotes
     });
 
 
