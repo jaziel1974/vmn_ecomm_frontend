@@ -241,8 +241,8 @@ export default function CartPage() {
                             <Input type="text" placeholder="CEP" value={postalCode} name="postalCode" onChange={ev => setPostalCode(ev.target.value)} />
                             <Input type="text" placeholder="Rua, número" value={streetAddress} name="streetAddress" onChange={ev => setStreetAddress(ev.target.value)} />
                             <Input type="text" placeholder="Complemento" value={country} name="country" onChange={ev => setCountry(ev.target.value)} />
-                            <textarea rows={4} placeholder="Notas internas" value={adminNotes} name="adminNotes" onChange={ev => setAdminNotes(ev.target.value)}/>
-                            <textarea rows={4} placeholder="Notas do cliente" value={customerNotes} name="customerNotes" onChange={ev => setCustomerNotes(ev.target.value)}/>
+                            <textarea rows={4} style={{ width: "99%" }} placeholder="Notas internas" value={adminNotes} name="adminNotes" onChange={ev => setAdminNotes(ev.target.value)}/>
+                            <textarea rows={4} style={{ width: "99%" }} placeholder="Notas do cliente" value={customerNotes} name="customerNotes" onChange={ev => setCustomerNotes(ev.target.value)}/>
                             <Button black block onClick={goToPayment}>Finalizar compra</Button>
                             <Button black block onClick={clearCart}>Limpar carrinho</Button>
                         </Box>
