@@ -263,11 +263,12 @@ export default function Header({ childToParent }) {
     }
 
     const handleKeyPress = useCallback((event) => {
-        const truefalse = event.key == '/';
+        const pressedSlash = event.key == '/';
         const escKey = event.key == 'Escape';
 
-        if (truefalse) {
-            ref.current.focus()
+        if (pressedSlash) {
+            ref.current.focus();
+            ref.current.select();
             event.preventDefault();
         }
         else if (escKey) {
