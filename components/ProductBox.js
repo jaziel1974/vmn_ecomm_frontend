@@ -1,14 +1,18 @@
-import styled from "styled-components";
 import Button from "@/components/Button";
-import CartIcon from "@/components/icons/CartIcon";
+import { AuthContext } from "@/pages/api/auth/auth";
 import Link from "next/link";
 import { useContext } from "react";
+import styled from "styled-components";
 import { CartContext } from "./CartContext";
-import { useSession } from "next-auth/react";
-import { AuthContext } from "@/pages/api/auth/auth";
 
 const ProductWrapper = styled.div`
-    width: 200px;
+    @media screen and (max-width: 768px) {
+        width: 120px;
+    }    
+    @media screen and (min-width: 769px) {
+       width: 150px;
+    }
+    border: 1px solid rgba(0, 0, 0, 0.1);
 `;
 
 const AddToCartDiv = styled.div`
