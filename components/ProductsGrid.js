@@ -5,7 +5,7 @@ import { getPrice } from "../pages/products";
 const StyledProductsGrid = styled.div`
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 5px;
     justify-content: center;
 `;
 

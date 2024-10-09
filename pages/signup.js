@@ -85,7 +85,7 @@ export default function SigninPage() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [emailConfirm, setEmailConfirm] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('5511');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
@@ -102,7 +102,7 @@ export default function SigninPage() {
             .then(res => {
                 if (res?.data){
                     sendEmail(email, "template_20efba4");
-                    setError("Solicitação de cadastro realizada. Por favor, verifique o seu e-mail para ativar sua conta.");
+                    setError("Solicitação de cadastro realizada. Em breve você receberá um e-mail de confirmação.");
                 }
                 else{
                     setError(res);

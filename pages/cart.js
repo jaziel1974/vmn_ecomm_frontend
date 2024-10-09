@@ -85,6 +85,7 @@ export default function CartPage() {
     const [adminNotes, setAdminNotes] = useState('');
     const [customerNotes, setCustomerNotes] = useState('');
 
+    console.log("user", user);
 
     useEffect(() => {
         if (cartProducts.length > 0) {

@@ -10,3 +10,10 @@ export function encrypt(text) {
     cipher.update(text);
     return cipher.final(cryptoProps.type);
 }
+
+export function decrypt(text) {
+    const crypto = require('crypto');
+    const decipher = crypto.createDecipher(cryptoProps.algorithm, cryptoProps.password);
+    decipher.update(text);
+    return decipher.final(cryptoProps.type);
+}

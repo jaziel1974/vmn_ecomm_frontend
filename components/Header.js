@@ -6,6 +6,7 @@ import { useContext, useCallback, useEffect, useRef, useState } from "react";
 import HelpIcon from "./icons/Help";
 import BasketIcon from "./icons/Bakset";
 import { background } from "@/lib/colors";
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const COLORS = {
     primaryDark: "#1B422E",
@@ -15,20 +16,22 @@ const COLORS = {
 const StyledHeader = styled.header`
     background-color: ${background};
     width: 100%;
-    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 100;
+    @media screen and (max-width: 768px) {
+        display: inline-block;
+    }
 `;
 
 const Logo = styled.div`
     text-decoration:none;
-    margin-left: 8px;
 `;
 
 const LogoImage = styled.img`
     padding-top: 13px;
+    margin-left: 8px;
     @media screen and (max-width: 768px) {
         height: 42px;
         width: 42px;
@@ -40,12 +43,22 @@ const LogoImage = styled.img`
 `;
 
 const Wrapper = styled.div`
-    display: flex;
     justify-content: space-between;
     @media screen and (max-width: 768px) {
-        justify-content: flex-start;
         column-gap: 40px;
     }
+`;
+
+const DivNav = styled.div`
+    @media screen and (min-width: 768px) {
+        display: flex;
+        justify-content: space-between;
+    }
+`;
+
+const StyledNavDiv = styled.div`
+    display: flex;
+    width: 100%;
 `;
 
 const StyledNav = styled.nav`
@@ -128,19 +141,12 @@ const NavButton = styled.button`
 
 
 const StyledSearchGrid = styled.div`
-    align-self: center;
-    @media screen and (min-width: 769px) {
-        width: 60%;
-    }
-    @media screen and (max-width: 768px) {
-        width: 50%;
-        color: green;
-    }
+    align-items: center;
 `;
 
 const StyledSearchText = styled.input`
     opacity: 80%;
-    width: 100%;
+    width: 99%;
     color: green;
     height: 30px;
 `;
@@ -239,6 +245,9 @@ const List = styled.ul`
 `;
 
 export default function Header({ childToParent }) {
+    const router = useRouter();
+
+    const [searchSelected, setSearchSelected] = useState(false);
     const { cartProducts } = useContext(CartContext);
     const [mobileNavActive, setMobileNavActive] = useState(false);
     const handleClick = () => setMobileNavActive(!mobileNavActive);
@@ -248,7 +257,6 @@ export default function Header({ childToParent }) {
         setMobileNavActive(!mobileNavActive);
         handleLogin();
     }
-
 
     const { signed, signout } = useContext(AuthContext);
 
@@ -262,6 +270,16 @@ export default function Header({ childToParent }) {
         childToParent(value);
     }
 
+    const redirect = (value) => {
+        router.push("/products?search=" + value);
+    }
+
+    const filterProducts = (value) => {
+        if (childToParent){
+            updateSearch(value);
+        }
+    }
+
     const handleKeyPress = useCallback((event) => {
         const pressedSlash = event.key == '/';
         const escKey = event.key == 'Escape';
@@ -273,6 +291,9 @@ export default function Header({ childToParent }) {
         }
         else if (escKey) {
             setSearch('');
+        }
+        else if (event.key == 'Enter' && searchSelected) {
+            redirect(event.target.value);
         }
     }, []);
 
@@ -290,44 +311,35 @@ export default function Header({ childToParent }) {
     return (
         <StyledHeader>
             <Wrapper>
-                <Logo>
-                    <LogoImage
-                        src='/logo.png'
-                        alt='Verde Musgo Natural'
-                    />
-                </Logo>
+                <DivNav>
+                    <Logo>
+                        <LogoImage
+                            src='/logo.png'
+                            alt='Verde Musgo Natural'
+                        />
+                    </Logo>
 
-                <StyledSearchGrid>
-                    <form>
-                        <StyledSearchText type="text"
-                            ref={ref}
-                            onChange={(e) => updateSearch(e.target.value)}
-                            placeholder="Procurar itens... pressione /"
-                        >
-                        </StyledSearchText>
-                    </form>
-                </StyledSearchGrid>
-
-                <StyledNav style={{ paddingTop: "25px" }}>
-                    <NavLink href={'/cart'}>
-                        <BasketIcon />
-                        ({cartProducts.length})
-                    </NavLink>
-                    <NavLink href={'/help'}>
-                        <HelpIcon />
-                    </NavLink>
-                    {!signed && (
-                        <NavLink href={'/signin'}>Sign in</NavLink>
-                    )}
-                    {signed && (
-                        <NavLink href=''
-                            onClick={e => {
-                                e.preventDefault();
-                                handleLogin();
-                            }}>Sign out
+                    <StyledNav style={{ paddingTop: "25px" }}>
+                        <NavLink href={'/cart'}>
+                            <BasketIcon />
+                            ({cartProducts.length})
                         </NavLink>
-                    )}
-                </StyledNav>
+                        <NavLink href={'/help'}>
+                            <HelpIcon />
+                        </NavLink>
+                        {!signed && (
+                            <NavLink href={'/signin'}>Sign in</NavLink>
+                        )}
+                        {signed && (
+                            <NavLink href=''
+                                onClick={e => {
+                                    e.preventDefault();
+                                    handleLogin();
+                                }}>Sign out
+                            </NavLink>
+                        )}
+                    </StyledNav>
+                </DivNav>
 
                 <MenuLabel htmlFor="navi-toggle" onClick={handleClick}>
                     <Icon clicked={mobileNavActive}>&nbsp;</Icon>
@@ -369,13 +381,26 @@ export default function Header({ childToParent }) {
                 </Navigation>
             </Wrapper>
 
-            <Wrapper style={{ justifyContent: "center" }}>
+            <StyledNavDiv style={{ justifyContent: "center" }}>
                 <StyledNav>
                     <NavLink href={'/products'} inactive={false}>Todos os produtos</NavLink>
                     <NavLink href={''} inactive={true}>Categorias</NavLink>
                     {signed && (<NavLink href={'/myAccount'} >Conta</NavLink>)}
                 </StyledNav>
-            </Wrapper>
+            </StyledNavDiv>
+
+            <StyledSearchGrid>
+                <form>
+                    <StyledSearchText type="text"
+                        ref={ref}
+                        onChange={(e) => filterProducts(e.target.value)}
+                        onFocus={() => setSearchSelected(true)}
+                        onBlur={() => setSearchSelected(false)}
+                        placeholder="Procurar itens... pressione /"
+                    >
+                    </StyledSearchText>
+                </form>
+            </StyledSearchGrid>
         </StyledHeader>
     )
 }

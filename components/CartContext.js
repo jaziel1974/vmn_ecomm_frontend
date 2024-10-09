@@ -30,6 +30,7 @@ export function CartContextProvider({ children }) {
     }
     function clearCart() {
         setCartProducts([]);
+        localStorage.setItem('cart', JSON.stringify([]));
     }
 
     return (

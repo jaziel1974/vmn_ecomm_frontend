@@ -1,12 +1,11 @@
 import Header from "@/components/Header";
-import Link from "next/link";
-import styled, { css } from "styled-components";
-import { background } from "@/lib/colors";
-import axios from "axios";
-import { useContext, useState } from "react";
-import { AuthContext } from "./api/auth/auth";
-import { format } from 'date-fns';
 import Table from "@/components/Table";
+import axios from "axios";
+import { format } from 'date-fns';
+import Link from "next/link";
+import { useContext, useState } from "react";
+import styled, { css } from "styled-components";
+import { AuthContext } from "./api/auth/auth";
 
 const COLORS = {
     primaryDark: "#1B422E",
@@ -15,11 +14,7 @@ const COLORS = {
 
 const Center = styled.div`
     margin: 0 auto;
-    top: 90px;
     position: relative;
-    @media screen and (min-width: 769px) {
-        top: 120px;
-    }
     display: flex;
     flex-direction: column;
     align-items: center;

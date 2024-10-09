@@ -2,11 +2,11 @@ import styled, {css} from "styled-components";
 import {primary, background, textColor} from "@/lib/colors";
 
 export const ButtonStyle = css`
-        border:0;
-        padding: 5px 15px;
-        border-radius: 5px;
+  border:0;
+  padding: 5px 15px;
+  border-radius: 5px;
   cursor: pointer;
-        display: inline-flex;
+  display: inline-flex;
   align-items: center;
   text-decoration: none;
   font-family: 'Poppins', sans-serif;

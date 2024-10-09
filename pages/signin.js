@@ -96,14 +96,20 @@ export default function SigninPage() {
         }
     }
 
+    const pressedEnter = (e) => {
+        if (e.key === 'Enter') {
+            handleLogin();
+        }
+    }
+
     return (
         <>
             <Header />
             <Center>
                 <Container>
                     <Content>
-                        <Input placeholder="E-mail" type="email" value={email} onChange={e => [setEmail(e.target.value), setError('')]}></Input>
-                        <Input placeholder="Senha" type="password" value={password} onChange={e => [setPassword(e.target.value), setError('')]}></Input>
+                        <Input placeholder="E-mail" type="email" value={email} onChange={e => [setEmail(e.target.value), setError('')]}  onKeyPress={e => pressedEnter(e)}></Input>
+                        <Input placeholder="Senha" type="password" value={password} onChange={e => [setPassword(e.target.value), setError('')]} onKeyPress={e => pressedEnter(e)}></Input>
                         {isPasswordRecovery && (
                             <div>
                                 <Button onClick={e => handlePasswordReset(email)}>Redefinir senha</Button>

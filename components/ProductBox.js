@@ -7,10 +7,11 @@ import { CartContext } from "./CartContext";
 
 const ProductWrapper = styled.div`
     @media screen and (max-width: 768px) {
-        width: 120px;
+        width: 150px;
+        flex-grow: 1;
     }    
     @media screen and (min-width: 769px) {
-       width: 150px;
+       width: 200px;
     }
     border: 1px solid rgba(0, 0, 0, 0.1);
 `;
@@ -27,29 +28,33 @@ const AddToCartDiv = styled.div`
 `;
 
 const WhiteBox = styled(Link)`
-    background-color: #fff;
-    padding: 20px;
-    height: 150px;
+    background-color: #e3ffe1;
+    @media screen and (min-width: 768px) {
+        height: 200px;
+    }
+    @media screen and (max-width: 767px) {
+        height: 150px;
+    }
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
     img{
-        max-width: 100%;
-        max-height: 80px;
+        max-width: 80%;
     }
     `;
 
 const Title = styled(Link)`
     font-weight: normal;
-    font-size:.9rem;
+    font-size:.7rem;
     color:inherit;
     text-decoration:none;
-margin:0;
+    margin:0;
 `;
 
 const ProductInfoBox = styled.div`
+    text-align: center;
     margin-top: 5px;
 `;
 
@@ -65,13 +70,13 @@ const PriceRow = styled.div`
 `;
 
 const Price = styled.div`
-    font-size: 1rem;
-    font-weight:400;
-    text-align: right;
+    width: 100%;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight:600;
     @media screen and (min-width: 768px) {
         font-size: 1.2rem;
         font-weight:600;
-        text-align: left;
     }    
 `;
 
@@ -90,7 +95,7 @@ export default function ProductBox({ _id, title, description, price, images, sto
         <ProductWrapper>
             <div>
                 <WhiteBox href={url}>
-                    <div><img src={images?.[0]} alt="" /></div>
+                    <div><img src={images?.[0]} alt=""/></div>
                 </WhiteBox>
                 {signed && stockAvailable && (
                 <AddToCartDiv>
@@ -108,7 +113,7 @@ export default function ProductBox({ _id, title, description, price, images, sto
                 <PriceRow>
                     {signed && stockAvailable && (
                         <Price>
-                            ${price}
+                            R${price} - Unidade
                         </Price>
                     )}
                     {signed && !stockAvailable && (
