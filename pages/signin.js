@@ -83,13 +83,13 @@ export default function SigninPage() {
             });
     }
 
-    const handlePasswordReset = (email) => {
+    const handlePasswordReset = async (email) => {
         if (!email) {
             setError('Preencha o e-mail');
             return;
         }
-        const passEncrypted = encrypt(password);
-        const res = axios.patch('/api/users', { email, password: passEncrypted });
+        const passEncrypted = await encrypt(password);
+        const res = await axios.patch('/api/users', { email, password: passEncrypted });
         if (res) {
             setIsPasswordRecovery(false);
             setError('Senha alterada com sucesso');

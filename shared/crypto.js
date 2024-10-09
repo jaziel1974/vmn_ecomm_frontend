@@ -1,19 +1,15 @@
+import CryptoJs from 'crypto-js';
+
 const cryptoProps = {
-    algorithm: 'aes256',
-    password: 'vOVH6qtSWrUqGbJQPEwVeQ',
-    type: 'hex'
+    enc: 'vOVH6qtSWrUqGbJQPEwVeQ',
+    iv: CryptoJs.lib.WordArray.random(128 / 8)
 }
 
 export function encrypt(text) {
-    const crypto = require('crypto');
-    const cipher = crypto.createCipher(cryptoProps.algorithm, cryptoProps.password);
-    cipher.update(text);
-    return cipher.final(cryptoProps.type);
+    return CryptoJs.AES.encrypt(JSON.stringify(text), cryptoProps.enc);
 }
 
 export function decrypt(text) {
-    const crypto = require('crypto');
-    const decipher = crypto.createDecipher(cryptoProps.algorithm, cryptoProps.password);
-    decipher.update(text);
-    return decipher.final(cryptoProps.type);
+    const bytes =  CryptoJs.AES.decrypt(text, cryptoProps.enc)
+    return JSON.parse(bytes.toString(CryptoJs.enc.Utf8));
 }

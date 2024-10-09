@@ -8,7 +8,6 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState();
 
     useEffect(() => {
-        debugger;
         const userToken = localStorage.getItem('user_token');
         
         if (userToken) {
@@ -42,15 +41,24 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const signin = async (email, password) => {
-        const user = await axios.get('/api/users?email=' + email);
+        let user = await axios.get('/api/users?email=' + email);
         console.log("user", user);
 
         if (user.data) {
-            const encrPass = encrypt(password);
+            const decrPass = decrypt(user.data?.password);
 
-            if (user.data.email === email && user.data?.password === encrPass) {
+            if (user.data.email === email && decrPass === password) {
                 const token = Math.random().toString(36).substring(2);
                 localStorage.setItem('user_token', JSON.stringify({ email, token }));
+
+                let customerData = await axios.get('/api/customers?email=' + email);
+                if(!customerData.data) {
+                    user = null;
+                }
+                else{
+                    user.data.priceId = customerData.data.priceId;
+                }
+
                 setUser({ email, password, user });
                 return;
             }

@@ -1,8 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import { encrypt } from "@/shared/crypto";
-import { NextAuthOptions } from "next-auth";
 import credentials from "next-auth/providers/credentials";
+import { decrypt, encrypt } from "../../../shared/crypto";
 
 export const authOptions = {
   providers: [
