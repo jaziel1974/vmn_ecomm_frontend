@@ -8,15 +8,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/products',
-        permanent: true,
-      },
-    ]
-  },
+
 }
 
 module.exports = nextConfig

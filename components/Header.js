@@ -2,7 +2,7 @@ import Link from "next/link";
 import styled from "styled-components";
 import { CartContext } from "@/components/CartContext";
 import { AuthContext } from "@/pages/api/auth/auth";
-import { useContext, useCallback, useEffect, useRef, useState } from "react";
+import { useContext, useCallback, useEffect, useState } from "react";
 import HelpIcon from "./icons/Help";
 import BasketIcon from "./icons/Bakset";
 import { background } from "@/lib/colors";
@@ -139,18 +139,6 @@ const NavButton = styled.button`
     }
 `;
 
-
-const StyledSearchGrid = styled.div`
-    align-items: center;
-`;
-
-const StyledSearchText = styled.input`
-    opacity: 80%;
-    width: 99%;
-    color: green;
-    height: 30px;
-`;
-
 const MenuLabel = styled.label`
     @media screen and (min-width: 769px) {
         display: none;
@@ -247,7 +235,6 @@ const List = styled.ul`
 export default function Header({ childToParent }) {
     const router = useRouter();
 
-    const [searchSelected, setSearchSelected] = useState(false);
     const { cartProducts } = useContext(CartContext);
     const [mobileNavActive, setMobileNavActive] = useState(false);
     const handleClick = () => setMobileNavActive(!mobileNavActive);
@@ -264,20 +251,8 @@ export default function Header({ childToParent }) {
         signout();
     }
 
-    const ref = useRef(null);
-
-    const updateSearch = (value) => {
-        childToParent(value);
-    }
-
     const redirect = (value) => {
         router.push("/products?search=" + value);
-    }
-
-    const filterProducts = (value) => {
-        if (childToParent){
-            updateSearch(value);
-        }
     }
 
     const handleKeyPress = useCallback((event) => {
@@ -316,6 +291,7 @@ export default function Header({ childToParent }) {
                         <LogoImage
                             src='/logo.png'
                             alt='Verde Musgo Natural'
+                            onClick={() => router.push('/')}
                         />
                     </Logo>
 
@@ -388,19 +364,6 @@ export default function Header({ childToParent }) {
                     {signed && (<NavLink href={'/myAccount'} >Conta</NavLink>)}
                 </StyledNav>
             </StyledNavDiv>
-
-            <StyledSearchGrid>
-                <form>
-                    <StyledSearchText type="text"
-                        ref={ref}
-                        onChange={(e) => filterProducts(e.target.value)}
-                        onFocus={() => setSearchSelected(true)}
-                        onBlur={() => setSearchSelected(false)}
-                        placeholder="Procurar itens... pressione /"
-                    >
-                    </StyledSearchText>
-                </form>
-            </StyledSearchGrid>
         </StyledHeader>
     )
 }

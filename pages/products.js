@@ -1,5 +1,4 @@
 import Center from "@/components/Center";
-import Featured from "@/components/Featured";
 import Header from "@/components/Header";
 import ProductsGrid from "@/components/ProductsGrid";
 import Title from "@/components/Title";
@@ -8,23 +7,65 @@ import { Product } from "@/models/Product";
 import { useContext, useState } from "react";
 import styled from "styled-components";
 import { AuthContext } from "./api/auth/auth";
+import { useRef } from "react";
 
 const StyledParagraph = styled.p`
     color: chocolate;
     font-weight: 700;
 `;
 
+const StyledSearchGrid = styled.div`
+    align-items: center;
+`;
+
+const StyledSearchText = styled.input`
+    opacity: 80%;
+    width: 99%;
+    color: green;
+    height: 30px;
+    margin-left: 2px;
+    margin-bottom: 2px;
+`;
+
 export default function ProductsPage({ products, latestProducts }) {
+    const [searchSelected, setSearchSelected] = useState(false);
+
     const { signed, user } = useContext(AuthContext);
     const [data, setData] = useState('');
+
+    const ref = useRef(null);
 
     const childToParent = (childData) => {
         setData(childData);
     }
 
+    const filterProducts = (value) => {
+        if (childToParent) {
+            updateSearch(value);
+        }
+    }
+
+    const updateSearch = (value) => {
+        childToParent(value);
+    }
+
     return (
         <>
             <Header childToParent={childToParent}></Header>
+
+            <StyledSearchGrid>
+                <form>
+                    <StyledSearchText type="text"
+                        ref={ref}
+                        onChange={(e) => filterProducts(e.target.value)}
+                        onFocus={() => setSearchSelected(true)}
+                        onBlur={() => setSearchSelected(false)}
+                        placeholder="Procurar itens... pressione /"
+                    >
+                    </StyledSearchText>
+                </form>
+            </StyledSearchGrid>
+
             <Center style={{ minWidth: '75%' }}>
                 <Title>Todos os produtos</Title>
                 {!signed &&
@@ -32,7 +73,6 @@ export default function ProductsPage({ products, latestProducts }) {
                 }
                 <ProductsGrid products={products} search={data}></ProductsGrid>
             </Center>
-            <Featured products={latestProducts}></Featured>
         </>
     );
 }
