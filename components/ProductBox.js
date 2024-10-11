@@ -95,7 +95,7 @@ export default function ProductBox({ _id, title, description, price, images, sto
         <ProductWrapper>
             <div>
                 <WhiteBox href={url}>
-                    <div style = {{ height: "100%" }}><img style = {{ height: "100%" }} src={images?.[0]} alt=""/></div>
+                    <div style = {{ maxHeight: "100%" }}><img style = {{ maxHeight: "100%", width: "auto" }} src={images?.[0]} alt=""/></div>
                 </WhiteBox>
                 {signed && stockAvailable && (
                 <AddToCartDiv>
