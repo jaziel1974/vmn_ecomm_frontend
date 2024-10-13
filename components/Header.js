@@ -1,12 +1,9 @@
-import Link from "next/link";
-import styled from "styled-components";
-import { CartContext } from "@/components/CartContext";
-import { AuthContext } from "@/pages/api/auth/auth";
-import { useContext, useCallback, useEffect, useState } from "react";
-import HelpIcon from "./icons/Help";
-import BasketIcon from "./icons/Bakset";
 import { background } from "@/lib/colors";
-import { useRouter, useSearchParams } from 'next/navigation';
+import { AuthContext } from "@/pages/api/auth/auth";
+import { useRouter } from 'next/navigation';
+import { useContext, useState } from "react";
+import styled from "styled-components";
+import Link from "next/link";
 
 const COLORS = {
     primaryDark: "#1B422E",
@@ -58,6 +55,12 @@ const DivNav = styled.div`
 
 const StyledNavDiv = styled.div`
     display: flex;
+    @media screen and (max-width: 768px) {
+        gap: 5px;
+    }
+    @media screen and (min-width: 768px) {
+        gap: 15px;
+    }   
     width: 100%;
 `;
 
@@ -82,6 +85,7 @@ const StyledNav = styled.nav`
         padding-right: 5px;
     }
     height: 40px;
+    font-size: 0.8rem;
 `;
 
 const NavLink = styled(Link)`
@@ -92,11 +96,14 @@ const NavLink = styled(Link)`
         color:#FEBA51;
     `}
     text-decoration:none;
+    @media screen and (max-width: 768px) {
+      font-size: 0.8rem;
+    }
     @media screen and (min-width: 768px) {
-        padding:0;
+        font-size: 1.6rem;
+        margin-bottom: 20px;
     }
     height: 25px;
-    font-size: large;
 `;
 
 const ItemLink = styled(Link)`
@@ -105,7 +112,6 @@ const ItemLink = styled(Link)`
   font-weight: 300;
   text-decoration: none;
   color: ${COLORS.primaryLight};
-  padding: 1rem 2rem;
   background-image: linear-gradient(
     120deg,
     transparent 0%,
@@ -121,22 +127,6 @@ const ItemLink = styled(Link)`
     color: ${COLORS.primaryDark};
     transform: translateX(1rem);
   }
-`;
-
-const NavButton = styled.button`
-    background-color: transparent;
-    width: 50px;
-    height: 30px;
-    border:0;
-    color: white;
-    cursor: pointer;
-    position: relative;
-    z-index: 3;
-    top: 10px;
-
-    @media screen and (min-width: 768px) {
-        display: none;
-    }
 `;
 
 const MenuLabel = styled.label`
@@ -161,15 +151,14 @@ const MenuLabel = styled.label`
 
 const NavBackground = styled.div`
   position: fixed;
-  top: 6.5rem;
-  right: 6.5rem;
+  right: 0;
   background-image: radial-gradient(
+    ${COLORS.primaryDark},
     ${COLORS.primaryDark},
     ${COLORS.primaryLight}
   );
-  height: 6rem;
-  width: 6rem;
-  border-radius: 50%;
+  height: .5rem;
+  width: .3rem;
   z-index: 600;
   transform: ${(props) => (props.clicked ? "scale(80)" : "scale(0)")};
   transition: transform 0.8s;
@@ -211,12 +200,12 @@ const Icon = styled.span`
 `;
 
 const Navigation = styled.nav`
-  height: 100vh;
+  height: 40vh;
   position: fixed;
   top: 0;
   right: 0;
   z-index: 600;
-  width: ${(props) => (props.clicked ? "100%" : "0")};
+  width: ${(props) => (props.clicked ? "50%" : "0")};
   opacity: ${(props) => (props.clicked ? "1" : "0")};
   transition: width 0.8s, opacity 0.8s;
 `;
@@ -232,10 +221,9 @@ const List = styled.ul`
   padding-left: 0;
 `;
 
-export default function Header({ childToParent }) {
+export default function Header() {
     const router = useRouter();
 
-    const { cartProducts } = useContext(CartContext);
     const [mobileNavActive, setMobileNavActive] = useState(false);
     const handleClick = () => setMobileNavActive(!mobileNavActive);
 
@@ -251,38 +239,6 @@ export default function Header({ childToParent }) {
         signout();
     }
 
-    const redirect = (value) => {
-        router.push("/products?search=" + value);
-    }
-
-    const handleKeyPress = useCallback((event) => {
-        const pressedSlash = event.key == '/';
-        const escKey = event.key == 'Escape';
-
-        if (pressedSlash) {
-            ref.current.focus();
-            ref.current.select();
-            event.preventDefault();
-        }
-        else if (escKey) {
-            setSearch('');
-        }
-        else if (event.key == 'Enter' && searchSelected) {
-            redirect(event.target.value);
-        }
-    }, []);
-
-    useEffect(() => {
-        // attach the event listener
-        document.addEventListener('keydown', handleKeyPress);
-
-        // remove the event listener
-        return () => {
-            document.removeEventListener('keydown', handleKeyPress);
-        };
-    }, [handleKeyPress]);
-
-
     return (
         <StyledHeader>
             <Wrapper>
@@ -296,13 +252,6 @@ export default function Header({ childToParent }) {
                     </Logo>
 
                     <StyledNav style={{ paddingTop: "25px" }}>
-                        <NavLink href={'/cart'}>
-                            <BasketIcon />
-                            ({cartProducts.length})
-                        </NavLink>
-                        <NavLink href={'/help'}>
-                            <HelpIcon />
-                        </NavLink>
                         {!signed && (
                             <NavLink href={'/signin'}>Sign in</NavLink>
                         )}
@@ -325,23 +274,6 @@ export default function Header({ childToParent }) {
                 <Navigation clicked={mobileNavActive}>
                     <List>
                         <li>
-                            <ItemLink onClick={handleClick} href="/products">
-                                Todos os produtos
-                            </ItemLink>
-                        </li>
-                        <li>
-                            <ItemLink href={'/cart'}>
-                                Cesta ({cartProducts.length} iten(s))
-                            </ItemLink>
-                        </li>
-                        <li>
-                            {signed && (
-                                <ItemLink onClick={handleClick} href="/myAccount">
-                                    Conta
-                                </ItemLink>
-                            )}
-                        </li>
-                        <li>
                             {!signed && (
                                 <ItemLink onClick={handleClick} href="/signin">
                                     Sign in
@@ -358,11 +290,9 @@ export default function Header({ childToParent }) {
             </Wrapper>
 
             <StyledNavDiv style={{ justifyContent: "center" }}>
-                <StyledNav>
-                    <NavLink href={'/products'} inactive={false}>Todos os produtos</NavLink>
-                    <NavLink href={''} inactive={true}>Categorias</NavLink>
-                    {signed && (<NavLink href={'/myAccount'} >Conta</NavLink>)}
-                </StyledNav>
+                <NavLink href={'/products'} inactive={false}>Todos os produtos</NavLink>
+                <NavLink href={''} inactive={true}>Categorias</NavLink>
+                {signed && (<NavLink href={'/myAccount'} >Conta</NavLink>)}
             </StyledNavDiv>
         </StyledHeader>
     )

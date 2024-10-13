@@ -17,8 +17,7 @@ body{
 .fontFamily{
   font-family: Laila, sans-serif;
 }
-
-  `;
+`;
 
 export default function App({ Component, pageProps: { session, ...pageProps } }) {
   return (
@@ -28,5 +27,5 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
         <Component {...pageProps} />;
       </CartContextProvider>
     </AuthProvider>
-  );
+  )
 }

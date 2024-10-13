@@ -1,13 +1,41 @@
+import { CartContext } from "@/components/CartContext";
+import Link from "next/link";
+import BasketIcon from "./../components/icons/Bakset";
 import Center from "@/components/Center";
 import Header from "@/components/Header";
 import ProductsGrid from "@/components/ProductsGrid";
 import Title from "@/components/Title";
 import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/Product";
-import { useContext, useState } from "react";
+import { useContext, useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { AuthContext } from "./api/auth/auth";
 import { useRef } from "react";
+
+const NavCartLink = styled.nav`
+    position: fixed;
+    top: 10px;
+    right: 47%;
+    z-index: 2000;
+`;
+
+const CartLink = styled(Link)`
+    display: flex;
+    ${props => props.inactive ? `
+        color: grey;
+    ` : `
+        color:#FEBA51;
+    `}
+    text-decoration:none;
+    @media screen and (max-width: 768px) {
+      font-size: 0.8rem;
+    }
+    @media screen and (min-width: 768px) {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+    height: 25px;
+`;
 
 const StyledParagraph = styled.p`
     color: chocolate;
@@ -20,7 +48,12 @@ const StyledSearchGrid = styled.div`
 
 const StyledSearchText = styled.input`
     opacity: 80%;
-    width: 99%;
+    @media screen and (max-width: 767px) {
+        width: 97%;
+    }
+    @media screen and (min-width: 768px) {
+        width: 99%;
+    }
     color: green;
     height: 30px;
     margin-left: 2px;
@@ -32,6 +65,7 @@ export default function ProductsPage({ products, latestProducts }) {
 
     const { signed, user } = useContext(AuthContext);
     const [data, setData] = useState('');
+    const { cartProducts } = useContext(CartContext);
 
     const ref = useRef(null);
 
@@ -49,18 +83,51 @@ export default function ProductsPage({ products, latestProducts }) {
         childToParent(value);
     }
 
+    const handleKeyPress = useCallback((event) => {
+        const pressedSlash = event.key == '/';
+        const escKey = event.key == 'Escape';
+
+        if (pressedSlash) {
+            ref.current.focus();
+            ref.current.select();
+            event.preventDefault();
+        }
+        else if (escKey) {
+            setSearch('');
+        }
+        else if (event.key == 'Enter' && searchSelected) {
+            redirect(event.target.value);
+        }
+    }, []);
+
+    useEffect(() => {
+        // attach the event listener
+        document.addEventListener('keydown', handleKeyPress);
+
+        // remove the event listener
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [handleKeyPress]);
+
     return (
         <>
-            <Header childToParent={childToParent}></Header>
+            <NavCartLink>
+                <CartLink href={'/cart'}>
+                    <BasketIcon style={{ width: "40px" }} />
+                    ({cartProducts.length})
+                </CartLink>
+            </NavCartLink>
+            <Header></Header>
 
-            <StyledSearchGrid>
+            <StyledSearchGrid style={{zIndex: 100}}>
                 <form>
                     <StyledSearchText type="text"
                         ref={ref}
                         onChange={(e) => filterProducts(e.target.value)}
                         onFocus={() => setSearchSelected(true)}
                         onBlur={() => setSearchSelected(false)}
-                        placeholder="Procurar itens... pressione /"
+                        placeholder="Procurar itens..."
                     >
                     </StyledSearchText>
                 </form>
