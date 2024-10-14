@@ -19,6 +19,9 @@ export const ButtonStyle = css`
     display: block;
     width: 100%;
   `}
+  ${props => props.marginBottom && css`
+    margin-bottom: 5px;
+  `}
   ${props => props.white && !props.outline && css`
     background-color: #fff;
     color: #000;
@@ -27,6 +30,10 @@ export const ButtonStyle = css`
     background-color: transparent;
     color: #fff;
     border: 1px solid #fff;
+  `}
+  ${props => props.black && !props.outline && css`
+    background-color: ${background};
+    color: #FEBA51;
   `}
   ${props => props.black && !props.outline && css`
     background-color: ${background};

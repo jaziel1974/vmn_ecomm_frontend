@@ -9,7 +9,7 @@ import Table from "@/components/Table";
 import Input from "@/components/Input";
 import { AuthContext } from "./api/auth/auth";
 import { getPrice } from "./products";
-import {sendEmail} from "../shared/mail";
+import { sendEmail } from "../shared/mail";
 
 const ColumnsWrapper = styled.div`
     display: grid;
@@ -67,6 +67,10 @@ const QuantityLabel = styled.span`
 const CityHolder = styled.div`
     display:flex;
     gap: 5px;
+`;
+
+const InputOrderDetail = styled(Input)`
+    padding: 10px;
 `;
 
 export default function CartPage() {
@@ -181,7 +185,7 @@ export default function CartPage() {
             <Header />
             <Center>
                 <ColumnsWrapper>
-                    <Box>
+                    <Box style={{ position: 'relative' }}>
                         <h2>Carrinho</h2>
                         {!cartProducts?.length && (
                             <div>Carrinho vazio</div>
@@ -230,21 +234,24 @@ export default function CartPage() {
                                 </tbody>
                             </Table>
                         )}
+                        <div style={{ position: 'absolute', bottom: '0', display: 'none'}}><span>Frete</span></div>
                     </Box>
                     {!!cartProducts.length && (
                         <Box>
-                            <h2>Order information</h2>
-                            <Input type="text" placeholder="Nome" value={name} name="name" onChange={ev => setName(ev.target.value)} />
-                            <Input type="text" placeholder="Email"
+                            <h2>Detalhes do Pedido</h2>
+                            <span style={{ display: 'block', marginBottom: '10px'}}>Frete: </span>{name}
+                            <span style={{ display: 'block', marginBottom: '10px' }}>Valor total do Pedido: <b>${total}</b></span>
+
+                            <InputOrderDetail type="text" placeholder="Nome" value={name} name="name" onChange={ev => setName(ev.target.value)} />
+                            <InputOrderDetail type="text" placeholder="Email"
                                 value={email}
                                 name="email" onChange={ev => setEmail(ev.target.value)} />
-                            <Input type="text" placeholder="Cidade" value={city} name="city" onChange={ev => setCity(ev.target.value)} />
-                            <Input type="text" placeholder="CEP" value={postalCode} name="postalCode" onChange={ev => setPostalCode(ev.target.value)} />
-                            <Input type="text" placeholder="Rua, número" value={streetAddress} name="streetAddress" onChange={ev => setStreetAddress(ev.target.value)} />
-                            <Input type="text" placeholder="Complemento" value={country} name="country" onChange={ev => setCountry(ev.target.value)} />
-                            <textarea rows={4} style={{ width: "99%" }} placeholder="Notas internas" value={adminNotes} name="adminNotes" onChange={ev => setAdminNotes(ev.target.value)}/>
-                            <textarea rows={4} style={{ width: "99%" }} placeholder="Notas do cliente" value={customerNotes} name="customerNotes" onChange={ev => setCustomerNotes(ev.target.value)}/>
-                            <Button black block onClick={goToPayment}>Finalizar compra</Button>
+                            <InputOrderDetail type="text" placeholder="Cidade" value={city} name="city" onChange={ev => setCity(ev.target.value)} />
+                            <InputOrderDetail type="text" placeholder="CEP" value={postalCode} name="postalCode" onChange={ev => setPostalCode(ev.target.value)} />
+                            <InputOrderDetail type="text" placeholder="Rua, número" value={streetAddress} name="streetAddress" onChange={ev => setStreetAddress(ev.target.value)} />
+                            <InputOrderDetail type="text" placeholder="Complemento" value={country} name="country" onChange={ev => setCountry(ev.target.value)} />
+                            <textarea rows={4} style={{ width: "99%" }} placeholder="Comentários sobre o pedido." value={customerNotes} name="customerNotes" onChange={ev => setCustomerNotes(ev.target.value)} />
+                            <Button black block marginBottom style={{ marginBotton: "10px" }} onClick={goToPayment}>Finalizar compra</Button>
                             <Button black block onClick={clearCart}>Limpar carrinho</Button>
                         </Box>
                     )}
