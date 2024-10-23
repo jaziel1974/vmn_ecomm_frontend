@@ -1,5 +1,4 @@
 import { mongooseConnect } from "@/lib/mongoose";
-import { Product } from "@/models/Product";
 import { Order } from "@/models/Order";
 const stripe = require('stripe')(process.env.STRIPE_SK);
 
@@ -16,50 +15,21 @@ export default async function handler(req, res) {
         streetAddress,
         country,
         cartProducts,
-        priceId,
         customerNotes,
         adminNotes,
     } = req.body;
 
     await mongooseConnect();
 
-    const productIds = cartProducts;
-    const uniqueIds = [...new Set(productIds)];
-    const productInfos = await Product.find({ _id: uniqueIds });
-
-    const getPrice = (product, pricePerZone) => {
-        if (!product) {
-            return 0;
-        }
-
-        if (pricePerZone) {
-            var zonedPrice = pricePerZone.filter(
-                price => {
-                    var match = price.name == priceId;
-                    return match;
-                })
-            if (zonedPrice.length > 0) {
-                return pricePerZone[0].values;
-            }
-            return product.price;
-        }
-        return product.price;
-    };
-
     let line_items = [];
-    for (const productId of uniqueIds) {
-        const productInfo = productInfos.find(info => info._id.toString() === productId);
-        const quantity = productIds.filter(id => id === productId)?.length || 0;
-        if (quantity > 0 && productInfo) {
-            line_items.push({
-                quantity: quantity,
-                currency: 'USD',
-                name: productInfo.title,
-                unit_amount: quantity * getPrice(productInfo, productInfo._doc.pricePerZone),
-            });
-        }
+    for (const cartItem of cartProducts) {
+        line_items.push({
+            quantity: cartItem.quantity,
+            currency: 'USD',
+            name: cartItem.product.title,
+            unit_amount: parseFloat(cartItem.unitPrice * cartItem.quantity),
+        });
     }
-
 
     const orderDoc = await Order.create({
         line_items,

@@ -1,15 +1,15 @@
-import Header from "@/components/Header";
-import styled from "styled-components";
-import Center from "@/components/Center";
 import Button from "@/components/Button";
-import { useContext, useEffect, useState } from "react";
 import { CartContext } from "@/components/CartContext";
-import axios from "axios";
-import Table from "@/components/Table";
+import Center from "@/components/Center";
+import Header from "@/components/Header";
 import Input from "@/components/Input";
-import { AuthContext } from "./api/auth/auth";
-import { getPrice } from "./products";
+import Table from "@/components/Table";
+import axios from "axios";
+import { useContext, useEffect, useState } from "react";
+import styled from "styled-components";
 import { sendEmail } from "../shared/mail";
+import { AuthContext } from "./api/auth/auth";
+import { generateCartItem, getPrice } from "./products";
 
 const ColumnsWrapper = styled.div`
     display: grid;
@@ -18,7 +18,6 @@ const ColumnsWrapper = styled.div`
         grid-template-columns: 1.2fr .8fr;
     }
     gap: 40px;
-    margin-top: 40px;
 `;
 
 const Box = styled.div`
@@ -33,7 +32,7 @@ const ProductInfoCell = styled.td`
 
 const ProductImageBox = styled.div`
     width: 70px;
-    height: 100px;
+    height: 70px;
     padding: 2px;
     border: 1px solid rgba(0, 0, 0, 0.1);  
     display:flex;
@@ -75,9 +74,8 @@ const InputOrderDetail = styled(Input)`
 
 export default function CartPage() {
     const { signed, user } = useContext(AuthContext);
+    const { cartProducts, setCartProducts, removeProduct, clearCart, cartProductsSize, setCartProductsSize, cartTotalValue, setCartTotalValue } = useContext(CartContext);
 
-    const { cartProducts, addProduct, removeProduct, clearCart } = useContext(CartContext);
-    const [products, setProducts] = useState([]);
     const [name, setName] = useState('');
     const [email, setEmail] = useState(user?.email);
     const [city, setCity] = useState('');
@@ -88,24 +86,23 @@ export default function CartPage() {
     const [priceId, setPriceId] = useState(user?.user.data.priceId);
     const [adminNotes, setAdminNotes] = useState('');
     const [customerNotes, setCustomerNotes] = useState('');
-
-    console.log("user", user);
+    const [shippingCost, setShippingCost] = useState(0);
+    const [shippingType, setShippingType] = useState('none');
 
     useEffect(() => {
-        if (cartProducts.length > 0) {
-            axios.post('/api/cart', { ids: cartProducts })
+        if (cartProducts?.size > 0) {
+            axios.post('/api/cart', { ids: cartProducts.keys() })
                 .then(response => {
-                    setProducts(response.data);
                     if (signed) {
                         axios.get('/api/customers?email=' + user.email)
                             .then(response => {
                                 setName(response.name);
                                 setStreetAddress(response.address);
+                                setShippingType(response.shippingType);
                             })
                     }
                 })
         } else {
-            setProducts([]);
             setName("");
             setStreetAddress("");
         }
@@ -124,12 +121,8 @@ export default function CartPage() {
         sendEmail(user.email, "template_akp3tfc");
     }
 
-    function moreOfThisProduct(productId) {
-        addProduct(productId);
-    }
-
-    function lessOfThisProduct(productId) {
-        removeProduct(productId);
+    function lessOfThisProduct(product) {
+        removeProduct(product);
     }
 
     async function goToPayment() {
@@ -146,7 +139,6 @@ export default function CartPage() {
             streetAddress,
             country,
             cartProducts,
-            priceId,
             adminNotes,
             customerNotes
         });
@@ -154,14 +146,6 @@ export default function CartPage() {
             window.location = response.data.url;
         }
         alternativePayment();
-    }
-
-    let total = 0;
-    if (products.length > 0) {
-        for (const productId of cartProducts) {
-            const price = getPrice(products.find(p => p._id === productId));
-            total += price;
-        }
     }
 
     if (isSuccess) {
@@ -187,10 +171,10 @@ export default function CartPage() {
                 <ColumnsWrapper>
                     <Box style={{ position: 'relative' }}>
                         <h2>Carrinho</h2>
-                        {!cartProducts?.length && (
+                        {cartProductsSize == 0 && (
                             <div>Carrinho vazio</div>
                         )}
-                        {products.length > 0 && (
+                        {cartProductsSize > 0 && (
                             <Table>
                                 <thead>
                                     <tr>
@@ -200,30 +184,28 @@ export default function CartPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {products.map(product => (
+                                    {cartProducts.map(cart => (
                                         <tr>
                                             <ProductInfoCell>
                                                 <ProductImageBox>
-                                                    <img src={product.images[0]} alt=""></img>
+                                                    <img src={cart.product.images[0]} alt=""></img>
                                                 </ProductImageBox>
-                                                {product.title}
+                                                {cart.product.title}
                                             </ProductInfoCell>
                                             <td>
-                                                <Button onClick={() => lessOfThisProduct(product._id)}>
+                                                <Button onClick={() => lessOfThisProduct(cart.product)}>
                                                     -
                                                 </Button>
                                                 <QuantityLabel>
-                                                    {cartProducts.filter(id => id === product._id).length}
+                                                    {cart.quantity}
                                                 </QuantityLabel>
-                                                <Button onClick={() => moreOfThisProduct(product._id)}>
-                                                    +
-                                                </Button>
+                                                <Button onClick={
+                                                    () => {setCartProducts(generateCartItem(cart.product, 1, signed, user, cartProducts)); 
+                                                        setCartProductsSize(cartProductsSize + 1); 
+                                                        setCartTotalValue(cartTotalValue + parseFloat(cart.unitPrice))}}
+                                                >+</Button>
                                             </td>
-                                            <td>
-                                                {
-                                                    cartProducts.filter(id => id === product._id).length * getPrice(product)
-                                                }
-                                            </td>
+                                            <td>{cart.unitPrice * cart.quantity}</td>
                                         </tr>
                                     ))}
                                     <tr>
@@ -240,7 +222,7 @@ export default function CartPage() {
                         <Box>
                             <h2>Detalhes do Pedido</h2>
                             <span style={{ display: 'block', marginBottom: '10px'}}>Frete: </span>{name}
-                            <span style={{ display: 'block', marginBottom: '10px' }}>Valor total do Pedido: <b>${total}</b></span>
+                            <span style={{ display: 'block', marginBottom: '10px' }}>Valor total do Pedido: <b>${cartTotalValue}</b></span>
 
                             <InputOrderDetail type="text" placeholder="Nome" value={name} name="name" onChange={ev => setName(ev.target.value)} />
                             <InputOrderDetail type="text" placeholder="Email"
@@ -258,5 +240,5 @@ export default function CartPage() {
                 </ColumnsWrapper>
             </Center>
         </>
-    );
+    )
 }

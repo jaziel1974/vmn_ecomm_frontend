@@ -2,9 +2,12 @@ import Button from "@/components/Button";
 import ButtonLink from "@/components/ButtonLink";
 import { CartContext } from "@/components/CartContext";
 import CartIcon from "@/components/icons/CartIcon";
+import { generateCartItem, getPrice } from "@/pages/products";
 import { motion } from "framer-motion";
 import { useContext, useEffect, useRef, useState } from "react";
 import { styled } from "styled-components";
+import { AuthContext } from "../pages/api/auth/auth";
+import { set } from "mongoose";
 
 const Banner = styled.div`
     background-color: #0D3029;
@@ -68,8 +71,10 @@ const ProductWrapper = styled.div`
     }
 `;
 
+
 export default function Featured({ products }) {
-    const { addProduct } = useContext(CartContext);
+    const { signed, user } = useContext(AuthContext);
+    const { cartProducts, setCartProducts, cartProductsSize, setCartProductsSize, cartTotalValue, setCartTotalValue } = useContext(CartContext);
 
     const carousel = useRef();
     const [width, setWidth] = useState(0);
@@ -77,11 +82,6 @@ export default function Featured({ products }) {
     useEffect(() => {
         setWidth(carousel.current?.scrollWidth - carousel.current?.offsetWidth);
     }, []);
-
-
-    function addFeaturedToCart() {
-        addProduct(products[0]._id);
-    }
 
     return (
         <Banner>
@@ -99,12 +99,14 @@ export default function Featured({ products }) {
                                     </ProductTitle>
                                 </ProductData>
                                 <DivButton>
+                                {signed && (
                                     <ButtonsWrapper>
-                                        <Button black={1} style={{ width: '140px' }} onClick={addFeaturedToCart}>
+                                        <Button black={1} style={{ width: '140px' }} onClick={() => { setCartProducts(generateCartItem(products[0], 1, signed, user, cartProducts)); setCartProductsSize(cartProductsSize + 1); setCartTotalValue(cartTotalValue + getPrice(product, signed, user)) }}>
                                             <CartIcon></CartIcon>
                                             <span style={{ fontSize: '0.8rem' }}>Adicionar ao carrinho</span>
                                         </Button>
                                     </ButtonsWrapper>
+                                )}
                                 </DivButton>
                             </ProductWrapper>
                         </motion.div>

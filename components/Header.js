@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useContext, useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
+import BasketIcon from "./icons/Bakset";
+import { CartContext } from "./CartContext";
 
 const COLORS = {
     primaryDark: "#1B422E",
@@ -11,6 +13,7 @@ const COLORS = {
 };
 
 const StyledHeader = styled.header`
+    position: fixed;
     background-color: ${background};
     width: 100%;
     top: 0;
@@ -19,6 +22,10 @@ const StyledHeader = styled.header`
     z-index: 100;
     @media screen and (max-width: 768px) {
         display: inline-block;
+        height: 90px;
+    }
+    @media screen and (min-width: 768px) {
+        height: 130px;
     }
 `;
 
@@ -55,11 +62,10 @@ const DivNav = styled.div`
 
 const StyledNavDiv = styled.div`
     display: flex;
+    gap: 15px;
     @media screen and (max-width: 768px) {
-        gap: 5px;
     }
     @media screen and (min-width: 768px) {
-        gap: 15px;
     }   
     width: 100%;
 `;
@@ -97,10 +103,10 @@ const NavLink = styled(Link)`
     `}
     text-decoration:none;
     @media screen and (max-width: 768px) {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
     }
     @media screen and (min-width: 768px) {
-        font-size: 1.6rem;
+        font-size: 1.3rem;
         margin-bottom: 20px;
     }
     height: 25px;
@@ -221,8 +227,34 @@ const List = styled.ul`
   padding-left: 0;
 `;
 
+const NavCartLink = styled.nav`
+    position: fixed;
+    top: 10px;
+    right: 47%;
+    z-index: 2000;
+`;
+
+const CartLink = styled(Link)`
+    display: flex;
+    ${props => props.inactive ? `
+        color: grey;
+    ` : `
+        color:#FEBA51;
+    `}
+    text-decoration:none;
+    @media screen and (max-width: 768px) {
+      font-size: 0.8rem;
+    }
+    @media screen and (min-width: 768px) {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+    height: 25px;
+`;
+
 export default function Header() {
     const router = useRouter();
+    const { cartProductsSize } = useContext(CartContext);
 
     const [mobileNavActive, setMobileNavActive] = useState(false);
     const handleClick = () => setMobileNavActive(!mobileNavActive);
@@ -241,6 +273,13 @@ export default function Header() {
 
     return (
         <StyledHeader>
+            <NavCartLink>
+                <CartLink href={'/cart'}>
+                    <BasketIcon style={{ width: "40px" }} />
+                    {cartProductsSize > 0 && (cartProductsSize)}
+                </CartLink>
+            </NavCartLink>
+
             <Wrapper>
                 <DivNav>
                     <Logo>

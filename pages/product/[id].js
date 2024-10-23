@@ -1,17 +1,17 @@
+import Button from "@/components/Button";
 import Center from "@/components/Center";
 import Header from "@/components/Header";
-import Title from "@/components/Title";
-import {mongooseConnect} from "@/lib/mongoose";
-import {Product} from "@/models/Product";
-import styled from "styled-components";
-import WhiteBox from "@/components/WhiteBox";
-import ProductImages from "@/components/ProductImages";
-import Button from "@/components/Button";
 import CartIcon from "@/components/icons/CartIcon";
+import ProductImages from "@/components/ProductImages";
+import Title from "@/components/Title";
+import WhiteBox from "@/components/WhiteBox";
+import { mongooseConnect } from "@/lib/mongoose";
+import { Product } from "@/models/Product";
 import { useContext } from "react";
-import { CartContext } from "@/components/CartContext";
-import { useSession } from "next-auth/react";
+import styled from "styled-components";
 import { AuthContext } from "../api/auth/auth";
+import { generateCartItem } from "../products";
+import { CartContext } from "@/components/CartContext";
 
 const ColWrapper = styled.div`
     display: grid;
@@ -33,7 +33,7 @@ const Price = styled.span`
 
 export default function ProductPage({ product }) {
     const { signed, user } = useContext(AuthContext);
-    const { addProduct } = useContext(CartContext);
+    const { cartProducts, setCartProducts, cartProductsSize, setCartProductsSize } = useContext(CartContext);
 
     return (
         <>
@@ -53,7 +53,7 @@ export default function ProductPage({ product }) {
                                 )}
                             </div>
                             <div>
-                                <Button primary={1} onClick={() => addProduct(product._id)}><CartIcon></CartIcon>Adicionar ao carrinho</Button>
+                                <Button primary={1} onClick={() => {setCartProducts(generateCartItem(product, 1, signed, user), cartProducts); setCartProductsSize(cartProductsSize + 1)}}><CartIcon></CartIcon>Adicionar ao carrinho</Button>
                             </div>
                         </PriceRow>
                     </div>

@@ -6,44 +6,25 @@ import Link from "next/link";
 import { useContext, useState } from "react";
 import styled, { css } from "styled-components";
 import { AuthContext } from "./api/auth/auth";
+import Center from "@/components/Center";
 
 const COLORS = {
     primaryDark: "#1B422E",
     primaryLight: "#FEBA51",
 };
 
-const Center = styled.div`
-    margin: 0 auto;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-`;
-
 const Wrapper = styled.div`
-    width: 100vw;
-    flex-wrap: wrap;
+    width: 100%;
     position: relative;
-    display: flex;
     @media screen and (max-width: 768px) {
-        justify-content: flex-start;
-        column-gap: 40px;
+    
     }
 `;
 
 const Menu = styled.div`
-    width: 100vw;
+    width: 100%;
+    display: block;
     background-color: ${COLORS.primaryLight};
-`;
-
-const Side = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: start;
-    height: 100vh;
-    gap: 50px;
-    position: relative;
-    width: 100vw;
 `;
 
 export const ErrorContent = styled.div`
@@ -69,22 +50,40 @@ export const LabelError = styled.label`
 
 export const OrderTitleDiv = styled.div`
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    @media screen and (max-width: 768px) {
+        justify-content: space-evenly;
+    }
+    @media screen and (min-width: 769px) {
+        justify-content: space-between;
+    }
+`;
+
+export const OrderDetailDiv = styled.div`
+    display: flex;
+    justify-content: space-around;
 `;
 
 export const OrderTitle = styled.span`
-    padding: 10px;
+    margin-top: 10px;
     text-align: center;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 1.2rem;
     color: ${COLORS.primaryDark};
+    @media screen and (max-width: 768px) {
+      font-size: 0.8rem;
+    }
+    @media screen and (min-width: 769px) {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+
 `;
 
-export const OrderDetailText = styled.span`
-    text-align: left;
+export const OrderDetailText = styled.div`
     font-weight: bold;
-    font-size: 12px;
+    font-size: 0.8rem;
     color: ${COLORS.primaryDark};
 `;
 
@@ -99,7 +98,12 @@ const StyledNav = styled.nav`
     display: flex;
     padding: 0;
     padding-right: 5px;
-    height: 40px;
+    @media screen and (max-width: 768px) {
+        height: 40px;
+    }
+    @media screen and (min-width: 769px) {
+        height: 50px;
+    }
 `;
 
 const NavLink = styled(Link)`
@@ -117,7 +121,13 @@ const NavLink = styled(Link)`
     height: 25px;
     padding-left: 20px;
     padding-right: 20px;
-    font-weight: bold;
+    @media screen and (max-width: 768px) {
+        font-size: 0.8rem;
+    }
+    @media screen and (min-width: 769px) {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
 `;
 
 export default function MyAccount({ childToParent }) {
@@ -142,17 +152,12 @@ export default function MyAccount({ childToParent }) {
         }
     }
 
-    const selectOrder = (orderId) => {
-        var filtered = orders.filter((order) => order._id === orderId);
-        if (filtered.length === 0) {
-            return;
-        }
-        setOrder(filtered[0]);
-        let orderSumup = 0;
-        filtered[0].line_items.map((product) => {
-            orderSumup += product.unit_amount;
+    const getOrderTotal = (line_items) => {
+        let total = 0;
+        line_items.forEach((item) => {
+            total += parseInt(item.quantity) * parseFloat(item.unit_amount);
         })
-        setOrderTotal(orderSumup);
+        return total;
     }
 
     return (
@@ -162,7 +167,7 @@ export default function MyAccount({ childToParent }) {
                 {error &&
                     <ErrorContent><LabelError>{error}</LabelError></ErrorContent>
                 }
-                <Wrapper >
+                <Wrapper>
                     <Menu>
                         <StyledNav>
                             <NavLink color={"dark"} href={'#'} onClick={(e) => refreshOrders(e)}>
@@ -170,61 +175,44 @@ export default function MyAccount({ childToParent }) {
                             </NavLink>
                         </StyledNav>
                     </Menu>
-                    <Side>
-                        <OrderTitleDiv>
-                            {orders.length > 0 && (
-                                <OrderTitle>Lista de pedidos</OrderTitle>
-                            )}
-                            <Table>
-                                <tbody>
-                                    {orders && orders.map((order) => (
-                                        <tr style={{ listStyleType: 'none' }} key={order._id}>
-                                            <td><NavLink color={"grey"} href={'#'} onClick={(e) => selectOrder(order._id)}>Pedido de {format(order.createdAt, 'dd/MM/yyyy')}</NavLink></td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
-                            <ul>
-                            </ul>
-                        </OrderTitleDiv>
-                        <OrderTitleDiv style={{ flexGrow: 1 }}>
-                            {order && (
-                                <>
-                                    <OrderTitle>Detalhes do pedido</OrderTitle>
-                                    <Table>
-                                        <thead style={{ height: 30 }}>
-                                            <tr >
-                                                <th style={{ width: "60%" }}>Produto</th>
-                                                <th>Quantidade</th>
-                                                <th>Preço</th>
-                                            </tr>
-                                        </thead>
-                                        < tbody >
-                                            {order.line_items.map((product) => (
-                                                <tr>
-                                                    <td>
-                                                        {product.name}
-                                                    </td>
-                                                    <td style={{ textAlign: "center" }}>
-                                                        {product.quantity}
-                                                    </td>
-                                                    <td style={{ textAlign: "center" }}>
-                                                        {product.unit_amount}
-                                                    </td>
+                    <OrderTitleDiv>
+                        {orders && orders.map((order) => (
+                            <div>
+                                {order && (
+                                    <>
+                                        <OrderTitle>Detalhes do pedido de {format(order.createdAt, 'dd/MM/yyyy')}</OrderTitle>
+                                        <Table>
+                                            <thead style={{ height: 30 }}>
+                                                <tr >
+                                                    <th style={{ width: "60%" }}>Produto</th>
+                                                    <th>Quantidade</th>
+                                                    <th>Preço</th>
                                                 </tr>
-                                            ))}
-                                            <tr>-----------------------</tr>
-                                            <tr colspan="3">Total: {orderTotal}</tr>
-                                        </tbody>
-                                    </Table>
-                                    <br />
-                                    <OrderDetailText>Data: {format(order.createdAt, 'dd/MM/yyyy')}</OrderDetailText>
-                                    <OrderDetailText>Pago: {order.paid ? 'Sim' : 'Não'}</OrderDetailText>
-                                    <OrderDetailText>Status: entregue</OrderDetailText>
-                                </>
-                            )}
-                        </OrderTitleDiv>
-                    </Side>
+                                            </thead>
+                                            < tbody >
+                                                {order.line_items.map((product) => (
+                                                    <tr>
+                                                        <td>
+                                                            {product.name}
+                                                        </td>
+                                                        <td style={{ textAlign: "center" }}>
+                                                            {product.quantity}
+                                                        </td>
+                                                        <td style={{ textAlign: "center" }}>
+                                                            {product.unit_amount}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                <tr>-------------------</tr>
+                                            </tbody>
+                                        </Table>
+                                        <OrderDetailText>Total: R$ {getOrderTotal(order.line_items)}</OrderDetailText>
+                                        <OrderDetailText style={{ paddingBottom: "30px" }}>Data: {format(order.createdAt, 'dd/MM/yyyy')} | Pago: {order.paid ? 'Sim' : 'Não'} | Status: entregue</OrderDetailText>
+                                    </>
+                                )}
+                            </div>
+                        ))}
+                    </OrderTitleDiv>
                 </Wrapper >
             </Center >
         </>

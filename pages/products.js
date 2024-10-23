@@ -1,41 +1,12 @@
-import { CartContext } from "@/components/CartContext";
-import Link from "next/link";
-import BasketIcon from "./../components/icons/Bakset";
 import Center from "@/components/Center";
 import Header from "@/components/Header";
 import ProductsGrid from "@/components/ProductsGrid";
 import Title from "@/components/Title";
 import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/Product";
-import { useContext, useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { AuthContext } from "./api/auth/auth";
-import { useRef } from "react";
-
-const NavCartLink = styled.nav`
-    position: fixed;
-    top: 10px;
-    right: 47%;
-    z-index: 2000;
-`;
-
-const CartLink = styled(Link)`
-    display: flex;
-    ${props => props.inactive ? `
-        color: grey;
-    ` : `
-        color:#FEBA51;
-    `}
-    text-decoration:none;
-    @media screen and (max-width: 768px) {
-      font-size: 0.8rem;
-    }
-    @media screen and (min-width: 768px) {
-        font-size: 1.2rem;
-        margin-bottom: 20px;
-    }
-    height: 25px;
-`;
 
 const StyledParagraph = styled.p`
     color: chocolate;
@@ -61,11 +32,10 @@ const StyledSearchText = styled.input`
 `;
 
 export default function ProductsPage({ products, latestProducts }) {
-    const [searchSelected, setSearchSelected] = useState(false);
-
     const { signed, user } = useContext(AuthContext);
+
+    const [searchSelected, setSearchSelected] = useState(false);
     const [data, setData] = useState('');
-    const { cartProducts } = useContext(CartContext);
 
     const ref = useRef(null);
 
@@ -112,28 +82,20 @@ export default function ProductsPage({ products, latestProducts }) {
 
     return (
         <>
-            <NavCartLink>
-                <CartLink href={'/cart'}>
-                    <BasketIcon style={{ width: "40px" }} />
-                    ({cartProducts.length})
-                </CartLink>
-            </NavCartLink>
             <Header></Header>
-
-            <StyledSearchGrid style={{zIndex: 100}}>
-                <form>
-                    <StyledSearchText type="text"
-                        ref={ref}
-                        onChange={(e) => filterProducts(e.target.value)}
-                        onFocus={() => setSearchSelected(true)}
-                        onBlur={() => setSearchSelected(false)}
-                        placeholder="Procurar itens..."
-                    >
-                    </StyledSearchText>
-                </form>
-            </StyledSearchGrid>
-
             <Center style={{ minWidth: '75%' }}>
+                <StyledSearchGrid style={{zIndex: 100}}>
+                    <form>
+                        <StyledSearchText type="text"
+                            ref={ref}
+                            onChange={(e) => filterProducts(e.target.value)}
+                            onFocus={() => setSearchSelected(true)}
+                            onBlur={() => setSearchSelected(false)}
+                            placeholder="Procurar itens..."
+                        >
+                        </StyledSearchText>
+                    </form>
+                </StyledSearchGrid>
                 <Title>Todos os produtos</Title>
                 {!signed &&
                     <StyledParagraph>Registre-se para ver o preço e adicionar itens à sacola.</StyledParagraph>
@@ -164,9 +126,7 @@ export async function getServerSideProps(params) {
     };
 }
 
-export function getPrice(product) {
-    const { signed, user } = useContext(AuthContext);
-    console.log("user getting product price", user);
+export function getPrice(product, signed, user) {
 
     if (!product) {
         return 0;
@@ -185,4 +145,24 @@ export function getPrice(product) {
         return product.price;
     }
     return product.price;
+}
+
+export const generateCartItem = (product, quantity, signed, user, cartProducts) => {
+    let cartItem = {
+        product: product,
+        quantity: quantity,
+        unitPrice: getPrice(product, signed, user),
+    }
+
+    let cartProductsData = [...cartProducts];
+    let cartProductItem = cartProductsData.find((cartItemData) => cartItemData.product._id == cartItem.product._id);
+    if (!cartProductItem) {
+        cartProductItem = cartItem;
+        cartProductsData.push(cartProductItem);
+    }
+    else{
+        cartProductItem.quantity = cartProductItem.quantity + cartItem.quantity;
+    }
+
+    return cartProductsData;
 }

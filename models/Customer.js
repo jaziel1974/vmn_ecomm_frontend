@@ -7,7 +7,8 @@ const CustomerSchema = new Schema({
     addressNotes: String,
     priceId: { type: Number, required: true },
     email: {type: String, required: true},
-    emailValidationHash: {type: String}
+    emailValidationHash: {type: String},
+    shippingType: {type: String, default: 'none'},
 },
     {
         timestamps: true

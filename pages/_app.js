@@ -24,7 +24,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
     <AuthProvider>
       <GlobalStyles />
       <CartContextProvider>
-        <Component {...pageProps} />;
+        <Component {...pageProps} />
       </CartContextProvider>
     </AuthProvider>
   )

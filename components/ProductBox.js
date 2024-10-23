@@ -1,5 +1,6 @@
 import Button from "@/components/Button";
 import { AuthContext } from "@/pages/api/auth/auth";
+import { generateCartItem } from "@/pages/products";
 import Link from "next/link";
 import { useContext } from "react";
 import styled from "styled-components";
@@ -80,43 +81,41 @@ const Price = styled.div`
     }    
 `;
 
-export default function ProductBox({ _id, title, description, price, images, stockAvailable }) {
-    const { signed } = useContext(AuthContext);
+export default function ProductBox(productV) {
+    let product = productV.product;
+    
+    const { signed, user } = useContext(AuthContext);
 
-    const { addProduct, removeProduct } = useContext(CartContext);
+    const { cartProducts, setCartProducts, removeProduct, cartProductsSize, setCartProductsSize, setCartTotalValue, cartTotalValue } = useContext(CartContext);
 
-    function lessOfThisProduct(productId) {
-        removeProduct(productId);
-    }
-
-    const url = '/product/' + _id;
+    const url = '/product/' + product._id;
 
     return (
         <ProductWrapper>
             <div>
                 <WhiteBox href={url}>
-                    <div style = {{ maxHeight: "100%" }}><img style = {{ maxHeight: "100%", width: "auto" }} src={images?.[0]} alt=""/></div>
+                    <div style = {{ maxHeight: "100%" }}><img style = {{ maxHeight: "100%", width: "auto" }} src={product.images?.[0]} alt=""/></div>
                 </WhiteBox>
-                {signed && stockAvailable && (
+                {signed && product.stockAvailable && (
                 <AddToCartDiv>
-                    <Button block="true" onClick={() => lessOfThisProduct(_id)} addToCart={1}>
+                    <Button block="true" onClick={() => removeProduct(product)} addToCart={1}>
                         -
                     </Button>
-                    <Button block="true" onClick={() => addProduct(_id)} addToCart={1}>
+                    <Button block="true" onClick={() => {setCartProducts(generateCartItem(product, 1, signed, user, cartProducts)); setCartProductsSize(cartProductsSize + 1); setCartTotalValue(cartTotalValue + parseFloat(product.price))}} addToCart={1}>
                         +
                     </Button>
                 </AddToCartDiv>
                 )}
             </div>
             <ProductInfoBox>
-                <Title href={url}>{title}</Title>
+                <Title href={url}>{product.title}</Title>
                 <PriceRow>
-                    {signed && stockAvailable && (
+                    {signed && product.stockAvailable && (
                         <Price>
-                            R${price} - Unidade
+                            R${product.price} - Unidade
                         </Price>
                     )}
-                    {signed && !stockAvailable && (
+                    {signed && !product.stockAvailable && (
                         <Price>
                             Indisponível
                         </Price>
