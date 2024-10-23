@@ -83,7 +83,6 @@ export default function CartPage() {
     const [streetAddress, setStreetAddress] = useState('');
     const [country, setCountry] = useState('');
     const [isSuccess, setIsSuccess] = useState(false);
-    const [priceId, setPriceId] = useState(user?.user.data.priceId);
     const [adminNotes, setAdminNotes] = useState('');
     const [customerNotes, setCustomerNotes] = useState('');
     const [shippingCost, setShippingCost] = useState(0);

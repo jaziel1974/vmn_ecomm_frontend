@@ -9,21 +9,21 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const userToken = localStorage.getItem('user_token');
-        
+
         if (userToken) {
             const emailFromStorage = JSON.parse(userToken).email;
             if (emailFromStorage) {
                 axios.get('/api/users?email=' + emailFromStorage)
-                .then(response => {
+                    .then(response => {
                         const userResponse = response;
                         axios.get('/api/customers?email=' + emailFromStorage)
                             .then(response => {
-                                if(!response.data) {
+                                if (!response.data) {
                                     setUser(null);
                                 }
-                                else{
-                                    userResponse.data.priceId = response.data.priceId;
-                                    setUser({ email: emailFromStorage, password:undefined, user: userResponse });
+                                else {
+                                    userResponse.data.customer = response.data;
+                                    setUser({ email: emailFromStorage, password: undefined, user: userResponse });
                                 }
                             })
                             .catch(error => {
@@ -52,11 +52,11 @@ export const AuthProvider = ({ children }) => {
                 localStorage.setItem('user_token', JSON.stringify({ email, token }));
 
                 let customerData = await axios.get('/api/customers?email=' + email);
-                if(!customerData.data) {
+                if (!customerData.data) {
                     user = null;
                 }
-                else{
-                    user.data.priceId = customerData.data.priceId;
+                else {
+                    user.data.customer = customerData.data;
                 }
 
                 setUser({ email, password, user });
@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }) => {
         const customer = await axios.get('/api/customers?email=' + email);
 
         const userData = user?.data;
-        userData.priceId = customer?.data?.priceId;
+        userData.customer = customer?.data;
 
         const hasUser = userData?.email === email;
         const encrPass = encrypt(password);

@@ -135,7 +135,7 @@ export function getPrice(product, signed, user) {
         if (product.pricePerZone) {
             var zonedPrice = product.pricePerZone.filter(
                 price => {
-                    return price.name == user.user.data.priceId;
+                    return price.name == user.user.data.customer.priceId;
                 })
             if (zonedPrice.length > 0) {
                 return zonedPrice[0].values;
