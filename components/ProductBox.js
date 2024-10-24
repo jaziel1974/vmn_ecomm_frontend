@@ -1,6 +1,6 @@
 import Button from "@/components/Button";
 import { AuthContext } from "@/pages/api/auth/auth";
-import { generateCartItem } from "@/pages/products";
+import { cartItemExists, generateCartItem, removeCartItem } from "@/pages/products";
 import Link from "next/link";
 import { useContext } from "react";
 import styled from "styled-components";
@@ -83,28 +83,36 @@ const Price = styled.div`
 
 export default function ProductBox(productV) {
     let product = productV.product;
-    
+
     const { signed, user } = useContext(AuthContext);
 
-    const { cartProducts, setCartProducts, removeProduct, cartProductsSize, setCartProductsSize, setCartTotalValue, cartTotalValue } = useContext(CartContext);
+    const { cartProducts, setCartProducts, cartProductsSize, setCartProductsSize, setCartTotalValue, cartTotalValue } = useContext(CartContext);
 
     const url = '/product/' + product._id;
+
+    const handleRemoveItem = (product) => {
+        if (cartItemExists(product, cartProducts)) {
+            setCartProducts(removeCartItem(product, 1, cartProducts));
+            setCartProductsSize(cartProductsSize - 1);
+            setCartTotalValue(cartTotalValue - parseFloat(product.price))
+        }
+    }
 
     return (
         <ProductWrapper>
             <div>
                 <WhiteBox href={url}>
-                    <div style = {{ maxHeight: "100%" }}><img style = {{ maxHeight: "100%", width: "auto" }} src={product.images?.[0]} alt=""/></div>
+                    <div style={{ maxHeight: "100%" }}><img style={{ maxHeight: "100%", width: "auto" }} src={product.images?.[0]} alt="" /></div>
                 </WhiteBox>
                 {signed && product.stockAvailable && (
-                <AddToCartDiv>
-                    <Button block="true" onClick={() => removeProduct(product)} addToCart={1}>
-                        -
-                    </Button>
-                    <Button block="true" onClick={() => {setCartProducts(generateCartItem(product, 1, signed, user, cartProducts)); setCartProductsSize(cartProductsSize + 1); setCartTotalValue(cartTotalValue + parseFloat(product.price))}} addToCart={1}>
-                        +
-                    </Button>
-                </AddToCartDiv>
+                    <AddToCartDiv>
+                        <Button block="true" onClick={() => handleRemoveItem(product)} addToCart={1}>
+                            -
+                        </Button>
+                        <Button block="true" onClick={() => { setCartProducts(generateCartItem(product, 1, signed, user, cartProducts)); setCartProductsSize(cartProductsSize + 1); setCartTotalValue(cartTotalValue + parseFloat(product.price)) }} addToCart={1}>
+                            +
+                        </Button>
+                    </AddToCartDiv>
                 )}
             </div>
             <ProductInfoBox>
@@ -122,6 +130,6 @@ export default function ProductBox(productV) {
                     )}
                 </PriceRow>
             </ProductInfoBox>
-        </ProductWrapper>
+        </ProductWrapper >
     );
 }

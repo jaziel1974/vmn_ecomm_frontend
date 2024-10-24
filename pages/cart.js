@@ -3,13 +3,14 @@ import { CartContext } from "@/components/CartContext";
 import Center from "@/components/Center";
 import Header from "@/components/Header";
 import Input from "@/components/Input";
+import { calculateShipping } from "@/components/ShippingEngine";
 import Table from "@/components/Table";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { sendEmail } from "../shared/mail";
 import { AuthContext } from "./api/auth/auth";
-import { generateCartItem, getPrice } from "./products";
+import { generateCartItem, removeCartItem } from "./products";
 
 const ColumnsWrapper = styled.div`
     display: grid;
@@ -74,7 +75,7 @@ const InputOrderDetail = styled(Input)`
 
 export default function CartPage() {
     const { signed, user } = useContext(AuthContext);
-    const { cartProducts, setCartProducts, removeProduct, clearCart, cartProductsSize, setCartProductsSize, cartTotalValue, setCartTotalValue } = useContext(CartContext);
+    const { cartProducts, setCartProducts, clearCart, cartProductsSize, setCartProductsSize, cartTotalValue, setCartTotalValue, shippingCost, setShippingCost } = useContext(CartContext);
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState(user?.email);
@@ -85,26 +86,9 @@ export default function CartPage() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [adminNotes, setAdminNotes] = useState('');
     const [customerNotes, setCustomerNotes] = useState('');
-    const [shippingCost, setShippingCost] = useState(0);
-    const [shippingType, setShippingType] = useState('none');
 
     useEffect(() => {
-        if (cartProducts?.size > 0) {
-            axios.post('/api/cart', { ids: cartProducts.keys() })
-                .then(response => {
-                    if (signed) {
-                        axios.get('/api/customers?email=' + user.email)
-                            .then(response => {
-                                setName(response.name);
-                                setStreetAddress(response.address);
-                                setShippingType(response.shippingType);
-                            })
-                    }
-                })
-        } else {
-            setName("");
-            setStreetAddress("");
-        }
+        setShippingCost(calculateShipping(user?.user.data.customer.shippingType, cartTotalValue, cartProductsSize));
     }, [cartProducts]);
 
     useEffect(() => {
@@ -118,10 +102,6 @@ export default function CartPage() {
         clearCart();
         setIsSuccess(true);
         sendEmail(user.email, "template_akp3tfc");
-    }
-
-    function lessOfThisProduct(product) {
-        removeProduct(product);
     }
 
     async function goToPayment() {
@@ -139,7 +119,8 @@ export default function CartPage() {
             country,
             cartProducts,
             adminNotes,
-            customerNotes
+            customerNotes,
+            shippingCost
         });
         if (response.data.url) {
             window.location = response.data.url;
@@ -192,16 +173,18 @@ export default function CartPage() {
                                                 {cart.product.title}
                                             </ProductInfoCell>
                                             <td>
-                                                <Button onClick={() => lessOfThisProduct(cart.product)}>
-                                                    -
-                                                </Button>
-                                                <QuantityLabel>
-                                                    {cart.quantity}
-                                                </QuantityLabel>
+                                                <Button onClick={
+                                                    () => {setCartProducts(removeCartItem(cart.product, 1, cartProducts)); 
+                                                        setCartProductsSize(cartProductsSize -1); 
+                                                        setCartTotalValue(cartTotalValue - parseFloat(cart.unitPrice));
+                                                    }}
+                                                >-</Button>
+                                                <QuantityLabel>{cart.quantity}</QuantityLabel>
                                                 <Button onClick={
                                                     () => {setCartProducts(generateCartItem(cart.product, 1, signed, user, cartProducts)); 
                                                         setCartProductsSize(cartProductsSize + 1); 
-                                                        setCartTotalValue(cartTotalValue + parseFloat(cart.unitPrice))}}
+                                                        setCartTotalValue(cartTotalValue + parseFloat(cart.unitPrice));
+                                                    }}
                                                 >+</Button>
                                             </td>
                                             <td>{cart.unitPrice * cart.quantity}</td>
@@ -215,12 +198,12 @@ export default function CartPage() {
                                 </tbody>
                             </Table>
                         )}
-                        <div style={{ position: 'absolute', bottom: '0', display: 'none'}}><span>Frete</span></div>
+                        <div style={{ position: 'absolute', bottom: '0', display: 'none'}}><span>Frete: </span></div>
                     </Box>
                     {!!cartProducts.length && (
                         <Box>
                             <h2>Detalhes do Pedido</h2>
-                            <span style={{ display: 'block', marginBottom: '10px'}}>Frete: </span>{name}
+                            <span style={{ display: 'block', marginBottom: '10px'}}>Frete: <b>${shippingCost}</b></span>{name}
                             <span style={{ display: 'block', marginBottom: '10px' }}>Valor total do Pedido: <b>${cartTotalValue}</b></span>
 
                             <InputOrderDetail type="text" placeholder="Nome" value={name} name="name" onChange={ev => setName(ev.target.value)} />

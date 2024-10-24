@@ -17,6 +17,7 @@ export default async function handler(req, res) {
         cartProducts,
         customerNotes,
         adminNotes,
+        shippingCost
     } = req.body;
 
     await mongooseConnect();
@@ -28,6 +29,15 @@ export default async function handler(req, res) {
             currency: 'USD',
             name: cartItem.product.title,
             unit_amount: parseFloat(cartItem.unitPrice * cartItem.quantity),
+        });
+    }
+
+    if (shippingCost > 0) {
+        line_items.push({
+            quantity: 1,
+            currency: 'USD',
+            name: 'Frete',
+            unit_amount: parseFloat(shippingCost),
         });
     }
 

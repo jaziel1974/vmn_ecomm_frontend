@@ -166,3 +166,33 @@ export const generateCartItem = (product, quantity, signed, user, cartProducts) 
 
     return cartProductsData;
 }
+
+
+export const removeCartItem = (product, quantity, cartProducts) => {
+    let cartItem = {
+        product: product,
+    }
+    let cartProductsData = [...cartProducts];
+
+    let cartProductItem = cartProductsData.find((cartItemData) => cartItemData.product._id == cartItem.product._id);
+    if (cartProductItem) {
+        if (cartProductItem.quantity - quantity > 0) {
+            cartProductItem.quantity = cartProductItem.quantity - quantity;
+        }
+        else{
+            cartProductsData = cartProducts.filter((cartItemData) => cartItemData.product._id != cartItem.product._id);
+        }
+    }
+
+    return cartProductsData;
+}
+
+export const cartItemExists = (product, cartProducts) => {
+    let cartItem = {
+        product: product,
+    }
+    if (cartProducts.find((cartItemData) => cartItemData.product._id == cartItem.product._id)){
+        return true;
+    }
+    return false;
+}
