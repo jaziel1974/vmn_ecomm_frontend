@@ -11,6 +11,7 @@ import styled from "styled-components";
 import { sendEmail } from "../shared/mail";
 import { AuthContext } from "./api/auth/auth";
 import { generateCartItem, removeCartItem } from "./products";
+import { calculatePromotion } from "@/components/PromotionEngine";
 
 const ColumnsWrapper = styled.div`
     display: grid;
@@ -75,7 +76,12 @@ const InputOrderDetail = styled(Input)`
 
 export default function CartPage() {
     const { signed, user } = useContext(AuthContext);
-    const { cartProducts, setCartProducts, clearCart, cartProductsSize, setCartProductsSize, cartTotalValue, setCartTotalValue, shippingCost, setShippingCost } = useContext(CartContext);
+    const { cartProducts, setCartProducts, clearCart
+        , cartProductsSize, setCartProductsSize, cartTotalValue
+        , setCartTotalValue, shippingCost, setShippingCost 
+        , promotionCost, setPromotionCost
+        , donationCost, setDonationCost
+    } = useContext(CartContext);
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState(user?.email);
@@ -89,6 +95,7 @@ export default function CartPage() {
 
     useEffect(() => {
         setShippingCost(calculateShipping(user?.user.data.customer.shippingType, cartTotalValue, cartProductsSize));
+        setPromotionCost(calculatePromotion(user?.user.data.customer, cartProducts))
     }, [cartProducts]);
 
     useEffect(() => {
@@ -135,8 +142,8 @@ export default function CartPage() {
                 <Center>
                     <ColumnsWrapper>
                         <Box>
-                            <h1>Thank you for shopping with us!</h1>
-                            <p>Go to home page</p>
+                            <h1>Obrigado por comprar com a gente</h1>
+                            <Button onClick={() => router.push('/')}>Ir para a página principal</Button>
                         </Box>
                     </ColumnsWrapper>
                 </Center>
@@ -203,9 +210,10 @@ export default function CartPage() {
                     {!!cartProducts.length && (
                         <Box>
                             <h2>Detalhes do Pedido</h2>
-                            <span style={{ display: 'block', marginBottom: '10px'}}>Frete: <b>${shippingCost}</b></span>{name}
+                            <span style={{ display: 'block', marginBottom: '10px'}}>Frete: <b>${shippingCost}</b></span>
+                            <span style={{ display: 'block', marginBottom: '10px', display: 'none'}}>Desconto: <b>${promotionCost} </b><Button>Zerar desconto</Button></span>
+                            <span style={{ display: 'block', marginBottom: '10px', display: 'none'}}>Ajuda Agroecológica: <b>${donationCost} </b><Button>Adicionar</Button></span>
                             <span style={{ display: 'block', marginBottom: '10px' }}>Valor total do Pedido: <b>${cartTotalValue}</b></span>
-
                             <InputOrderDetail type="text" placeholder="Nome" value={name} name="name" onChange={ev => setName(ev.target.value)} />
                             <InputOrderDetail type="text" placeholder="Email"
                                 value={email}

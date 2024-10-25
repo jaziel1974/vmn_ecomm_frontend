@@ -48,7 +48,12 @@ const WhiteBox = styled(Link)`
 
 const Title = styled(Link)`
     font-weight: normal;
-    font-size:.7rem;
+    @media screen and (min-width: 768px) {
+        font-size:.9rem;
+    }
+    @media screen and (max-width: 767px) {
+        font-size:.7rem;
+    }
     color:inherit;
     text-decoration:none;
     margin:0;

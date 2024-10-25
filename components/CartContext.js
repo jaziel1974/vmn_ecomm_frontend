@@ -9,6 +9,8 @@ export function CartContextProvider({ children }) {
     const [cartProductsSize, setCartProductsSize] = useState(0);
     const [cartTotalValue, setCartTotalValue] = useState(0);
     const [shippingCost, setShippingCost] = useState(0);
+    const [promotionCost, setPromotionCost] = useState(0);
+    const [donationCost, setDonationCost] = useState(0);
 
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cartProducts));
@@ -28,7 +30,13 @@ export function CartContextProvider({ children }) {
     }
 
     return (
-        <CartContext.Provider value={{ cartProducts, setCartProducts, clearCart, cartProductsSize, setCartProductsSize, cartTotalValue, setCartTotalValue, shippingCost, setShippingCost }}>
+        <CartContext.Provider value={{ cartProducts, setCartProducts, clearCart, 
+            cartProductsSize, setCartProductsSize, 
+            cartTotalValue, setCartTotalValue, 
+            shippingCost, setShippingCost, 
+            promotionCost, setPromotionCost,
+            donationCost, setDonationCost
+            }}>
             {children}
         </CartContext.Provider>
     );
