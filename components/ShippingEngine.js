@@ -1,5 +1,4 @@
 export const calculateShipping = (freigthType, totalCost, quantity) => {
-    debugger;
     switch (freigthType) {
         case 'none':
             return 0;

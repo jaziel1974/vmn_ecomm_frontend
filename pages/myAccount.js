@@ -62,7 +62,7 @@ export const OrderTitleDiv = styled.div`
 
 export const OrderDetailDiv = styled.div`
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
 `;
 
 export const OrderTitle = styled.span`
@@ -75,10 +75,20 @@ export const OrderTitle = styled.span`
       font-size: 0.8rem;
     }
     @media screen and (min-width: 769px) {
-        font-size: 1.2rem;
+        font-size: 1rem;
         margin-bottom: 20px;
     }
 
+`;
+
+export const OrderTitleInner = styled.div`
+    position: relative;
+    border-style: solid;
+    border-radius: 10px;
+    height: 400px;
+    margin: 10px;
+    padding: 5px;
+    width: 300px;
 `;
 
 export const OrderDetailText = styled.div`
@@ -177,40 +187,43 @@ export default function MyAccount({ childToParent }) {
                     </Menu>
                     <OrderTitleDiv>
                         {orders && orders.map((order) => (
-                            <div>
+                            <OrderTitleInner>
                                 {order && (
                                     <>
                                         <OrderTitle>Detalhes do pedido de {format(order.createdAt, 'dd/MM/yyyy')}</OrderTitle>
-                                        <Table>
-                                            <thead style={{ height: 30 }}>
-                                                <tr >
-                                                    <th style={{ width: "60%" }}>Produto</th>
-                                                    <th>Quantidade</th>
-                                                    <th>Preço</th>
-                                                </tr>
-                                            </thead>
-                                            < tbody >
-                                                {order.line_items.map((product) => (
-                                                    <tr>
-                                                        <td>
-                                                            {product.name}
-                                                        </td>
-                                                        <td style={{ textAlign: "center" }}>
-                                                            {product.quantity}
-                                                        </td>
-                                                        <td style={{ textAlign: "center" }}>
-                                                            {product.unit_amount}
-                                                        </td>
+                                        <div style={{ overflow: "auto", maxHeight: "60%" }}>
+                                            <Table>
+                                                <thead style={{ height: 30 }}>
+                                                    <tr >
+                                                        <th style={{ width: "60%" }}>Produto</th>
+                                                        <th>Quantidade</th>
+                                                        <th>Preço</th>
                                                     </tr>
-                                                ))}
-                                                <tr>-------------------</tr>
-                                            </tbody>
-                                        </Table>
-                                        <OrderDetailText>Total: R$ {getOrderTotal(order.line_items)}</OrderDetailText>
-                                        <OrderDetailText style={{ paddingBottom: "30px" }}>Data: {format(order.createdAt, 'dd/MM/yyyy')} | Pago: {order.paid ? 'Sim' : 'Não'} | Status: entregue</OrderDetailText>
+                                                </thead>
+                                                < tbody >
+                                                    {order.line_items.map((product) => (
+                                                        <tr>
+                                                            <td>
+                                                                {product.name}
+                                                            </td>
+                                                            <td style={{ textAlign: "center" }}>
+                                                                {product.quantity}
+                                                            </td>
+                                                            <td style={{ textAlign: "center" }}>
+                                                                {product.unit_amount}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </Table>
+                                        </div>
+                                        <div style={{ position: "absolute", bottom: 0, borderTopStyle: "dashed", borderTopWidth: "1px", }}>
+                                            <OrderDetailText>Total: R$ {getOrderTotal(order.line_items)}</OrderDetailText>
+                                            <OrderDetailText style={{ paddingBottom: "30px" }}>Data: {format(order.createdAt, 'dd/MM/yyyy')} | Pago: {order.paid ? 'Sim' : 'Não'} | Status: entregue</OrderDetailText>
+                                        </div>
                                     </>
                                 )}
-                            </div>
+                            </OrderTitleInner>
                         ))}
                     </OrderTitleDiv>
                 </Wrapper >
