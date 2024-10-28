@@ -165,7 +165,7 @@ export default function MyAccount({ childToParent }) {
     const getOrderTotal = (line_items) => {
         let total = 0;
         line_items.forEach((item) => {
-            total += parseInt(item.quantity) * parseFloat(item.unit_amount);
+            total += parseFloat(item.unit_amount);
         })
         return total;
     }
