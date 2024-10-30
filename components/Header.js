@@ -292,14 +292,14 @@ export default function Header() {
 
                     <StyledNav style={{ paddingTop: "25px" }}>
                         {!signed && (
-                            <NavLink href={'/signin'}>Sign in</NavLink>
+                            <NavLink href={'/signin'}>Entrar</NavLink>
                         )}
                         {signed && (
                             <NavLink href=''
                                 onClick={e => {
                                     e.preventDefault();
                                     handleLogin();
-                                }}>Sign out
+                                }}>Sair
                             </NavLink>
                         )}
                     </StyledNav>
@@ -315,12 +315,12 @@ export default function Header() {
                         <li>
                             {!signed && (
                                 <ItemLink onClick={handleClick} href="/signin">
-                                    Sign in
+                                    Entrar
                                 </ItemLink>
                             )}
                             {signed && (
                                 <ItemLink onClick={(e) => signoutClick(e)} href="">
-                                    Sign out
+                                    Sair
                                 </ItemLink>
                             )}
                         </li>
@@ -329,6 +329,7 @@ export default function Header() {
             </Wrapper>
 
             <StyledNavDiv style={{ justifyContent: "center" }}>
+                <NavLink href={'/'} inactive={false}>Principal</NavLink>
                 <NavLink href={'/products'} inactive={false}>Todos os produtos</NavLink>
                 <NavLink href={''} inactive={true}>Categorias</NavLink>
                 {signed && (<NavLink href={'/myAccount'} >Conta</NavLink>)}
