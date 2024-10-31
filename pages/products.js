@@ -116,7 +116,7 @@ export async function getServerSideProps(params) {
     else {
         products = await Product.find({ title: { $regex: search, $options: 'i' } }, null, { sort: { 'stockAvailable': -1, 'title': 1 } });
     }
-    const latestProducts = await Product.find({}, null, { sort: { 'createdAt': -1 }, limit: 10 });
+    const latestProducts = await Product.find({stockAvailable: true}, null, { sort: { 'createdAt': -1 }, limit: 10 });
 
     return {
         props: {
