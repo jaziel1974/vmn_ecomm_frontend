@@ -7,10 +7,8 @@ import { motion } from "framer-motion";
 import { useContext, useEffect, useRef, useState } from "react";
 import { styled } from "styled-components";
 import { AuthContext } from "../pages/api/auth/auth";
-import { set } from "mongoose";
 
 const Banner = styled.div`
-    background-color: #0D3029;
     margin: 10px;
     padding: 5px;
     gap: 20px;
@@ -20,24 +18,21 @@ const Banner = styled.div`
 const ProductData = styled.div`
     min-height: 200px;
     border-radius: 10px;
-    border: 3px solid rgba(0, 0, 0, 0.1);
 `;
 
 const ProductTitle = styled.div`
     min-height: 200px;
     padding:10px;
     color: #1B422E;
-    background-color: #f0f4bc;
+    background-color: #C5F0C2;
     opacity: 70%;
 `;
 
 const Title = styled.h1`
-    font-weight:normal;
     font-size:1rem;
 
 `;
 const Desc = styled.p`
-    font-size:1rem;
     font-size:.8rem;
 `;
 
@@ -55,20 +50,17 @@ const ButtonsWrapper = styled.div`
 `;
 
 const ProductWrapper = styled.div`
+    box-shadow: inset 0 -3em 3em rgba(0,0,0,0.2),
+             0 0  0 2px rgb(245,245,245),
+             0.3em 0.3em 1em rgba(0,0,0,0.4);
     display: block;
     border-radius: 10px;
     min-height: 95%;
-    border: 3px solid rgba(0, 0, 0, 0.1);
-    margin: 2px;
-    background-color: #ffedbc;
+    margin: 10px;
+    background-color: #1B422E;
     height: 300px;
     background-size: cover;
-    @media (max-width: 768px) {
-        width: 340px;
-    }
-    @media (min-width: 769px) {
-        width: 440px;
-    }
+    width: 600px;
 `;
 
 
@@ -85,7 +77,6 @@ export default function Featured({ products }) {
 
     return (
         <Banner>
-            <div style={{ padding: '5px' }}><span style={{ color: '#FEBA51' }}>O que a gente tem de melhor</span></div>
             <motion.div ref={carousel} style={{ cursor: 'grab', overflow: 'hidden' }} whileTap={{ cursor: 'grabbing' }}>
                 <motion.div style={{ display: 'flex' }} drag="x" dragConstraints={{ right: 0, left: -width }} initial={{ x: 100 }} animate={{ x: 0 }} transition={{ duration: 0.8 }}>
                     {products.map((product) =>
