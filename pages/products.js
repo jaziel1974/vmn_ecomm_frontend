@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import ProductsGrid from "@/components/ProductsGrid";
 import Title from "@/components/Title";
 import { mongooseConnect } from "@/lib/mongoose";
+import { Category } from "@/models/Category";
 import { Product } from "@/models/Product";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
@@ -84,7 +85,7 @@ export default function ProductsPage({ products, latestProducts }) {
         <>
             <Header></Header>
             <Center style={{ minWidth: '75%' }}>
-                <StyledSearchGrid style={{zIndex: 100}}>
+                <StyledSearchGrid style={{ zIndex: 100 }}>
                     <form>
                         <StyledSearchText type="text"
                             ref={ref}
@@ -108,15 +109,26 @@ export default function ProductsPage({ products, latestProducts }) {
 
 export async function getServerSideProps(params) {
     let search = params?.query?.search;
+    let category = params?.query?.category;
+
     await mongooseConnect();
     let products = [];
-    if (!search) {
+    if (category) {
+        let categoryData = await Category.findOne({ name: category });
+        if (!categoryData) {
+            products = [];
+        }
+        else {
+            products = await Product.find({ category: categoryData._id }, null, { sort: { 'stockAvailable': -1, 'title': 1 } });
+        }
+    }
+    else if (!search) {
         products = await Product.find({}, null, { sort: { 'stockAvailable': -1, 'title': 1 } });
     }
     else {
         products = await Product.find({ title: { $regex: search, $options: 'i' } }, null, { sort: { 'stockAvailable': -1, 'title': 1 } });
     }
-    const latestProducts = await Product.find({stockAvailable: true}, null, { sort: { 'createdAt': -1 }, limit: 10 });
+    const latestProducts = await Product.find({ stockAvailable: true }, null, { sort: { 'createdAt': -1 }, limit: 10 });
 
     return {
         props: {
@@ -160,7 +172,7 @@ export const generateCartItem = (product, quantity, signed, user, cartProducts) 
         cartProductItem = cartItem;
         cartProductsData.push(cartProductItem);
     }
-    else{
+    else {
         cartProductItem.quantity = cartProductItem.quantity + cartItem.quantity;
     }
 
@@ -179,7 +191,7 @@ export const removeCartItem = (product, quantity, cartProducts) => {
         if (cartProductItem.quantity - quantity > 0) {
             cartProductItem.quantity = cartProductItem.quantity - quantity;
         }
-        else{
+        else {
             cartProductsData = cartProducts.filter((cartItemData) => cartItemData.product._id != cartItem.product._id);
         }
     }
@@ -191,7 +203,7 @@ export const cartItemExists = (product, cartProducts) => {
     let cartItem = {
         product: product,
     }
-    if (cartProducts.find((cartItemData) => cartItemData.product._id == cartItem.product._id)){
+    if (cartProducts.find((cartItemData) => cartItemData.product._id == cartItem.product._id)) {
         return true;
     }
     return false;

@@ -331,7 +331,7 @@ export default function Header() {
             <StyledNavDiv style={{ justifyContent: "center" }}>
                 <NavLink href={'/'} inactive={false}>Principal</NavLink>
                 <NavLink href={'/products'} inactive={false}>Todos os produtos</NavLink>
-                <NavLink href={''} inactive={true}>Categorias</NavLink>
+                <NavLink href={'/categories'} inactive={false}>Categorias</NavLink>
                 {signed && (<NavLink href={'/myAccount'} >Conta</NavLink>)}
             </StyledNavDiv>
         </StyledHeader>
