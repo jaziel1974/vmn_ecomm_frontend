@@ -214,15 +214,15 @@ export default function CartPage() {
                             <span style={{ display: 'block', marginBottom: '10px', display: 'none'}}>Desconto: <b>${promotionCost} </b><Button>Zerar desconto</Button></span>
                             <span style={{ display: 'block', marginBottom: '10px', display: 'none'}}>Ajuda Agroecológica: <b>${donationCost} </b><Button>Adicionar</Button></span>
                             <span style={{ display: 'block', marginBottom: '10px' }}>Valor total do Pedido: <b>${cartTotalValue + shippingCost}</b></span>
-                            <InputOrderDetail type="text" placeholder="Nome" value={name} name="name" onChange={ev => setName(ev.target.value)} />
-                            <InputOrderDetail type="text" placeholder="Email"
+                            <InputOrderDetail disabled type="text" placeholder="Nome" value={name} name="name" onChange={ev => setName(ev.target.value)} />
+                            <InputOrderDetail disabled type="text" placeholder="Email"
                                 value={email}
                                 name="email" onChange={ev => setEmail(ev.target.value)} />
-                            <InputOrderDetail type="text" placeholder="Cidade" value={city} name="city" onChange={ev => setCity(ev.target.value)} />
-                            <InputOrderDetail type="text" placeholder="CEP" value={postalCode} name="postalCode" onChange={ev => setPostalCode(ev.target.value)} />
-                            <InputOrderDetail type="text" placeholder="Rua, número" value={streetAddress} name="streetAddress" onChange={ev => setStreetAddress(ev.target.value)} />
-                            <InputOrderDetail type="text" placeholder="Complemento" value={country} name="country" onChange={ev => setCountry(ev.target.value)} />
-                            <textarea rows={4} style={{ width: "99%" }} placeholder="Comentários sobre o pedido." value={customerNotes} name="customerNotes" onChange={ev => setCustomerNotes(ev.target.value)} />
+                            <InputOrderDetail disabled type="text" placeholder="Cidade" value={city} name="city" onChange={ev => setCity(ev.target.value)} />
+                            <InputOrderDetail disabled type="text" placeholder="CEP" value={postalCode} name="postalCode" onChange={ev => setPostalCode(ev.target.value)} />
+                            <InputOrderDetail disabled type="text" placeholder="Rua, número" value={streetAddress} name="streetAddress" onChange={ev => setStreetAddress(ev.target.value)} />
+                            <InputOrderDetail disabled type="text" placeholder="Complemento" value={country} name="country" onChange={ev => setCountry(ev.target.value)} />
+                            <textarea rows={4} style={{ width: "99%" }} placeholder="Adicione aqui comentários sobre o pedido." value={customerNotes} name="customerNotes" onChange={ev => setCustomerNotes(ev.target.value)} />
                             <Button black block marginBottom style={{ marginBotton: "10px" }} onClick={goToPayment}>Finalizar compra</Button>
                             <Button black block onClick={clearCart}>Limpar carrinho</Button>
                         </Box>
