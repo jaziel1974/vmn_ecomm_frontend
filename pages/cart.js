@@ -213,7 +213,7 @@ export default function CartPage() {
                             <span style={{ display: 'block', marginBottom: '10px'}}>Frete: <b>${shippingCost}</b></span>
                             <span style={{ display: 'block', marginBottom: '10px', display: 'none'}}>Desconto: <b>${promotionCost} </b><Button>Zerar desconto</Button></span>
                             <span style={{ display: 'block', marginBottom: '10px', display: 'none'}}>Ajuda Agroecológica: <b>${donationCost} </b><Button>Adicionar</Button></span>
-                            <span style={{ display: 'block', marginBottom: '10px' }}>Valor total do Pedido: <b>${cartTotalValue}</b></span>
+                            <span style={{ display: 'block', marginBottom: '10px' }}>Valor total do Pedido: <b>${cartTotalValue + shippingCost}</b></span>
                             <InputOrderDetail type="text" placeholder="Nome" value={name} name="name" onChange={ev => setName(ev.target.value)} />
                             <InputOrderDetail type="text" placeholder="Email"
                                 value={email}

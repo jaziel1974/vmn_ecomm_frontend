@@ -4,6 +4,7 @@ import Title from "@/components/Title";
 import { mongooseConnect } from "@/lib/mongoose";
 import { Category } from "@/models/Category";
 import styled from "styled-components";
+import { useRouter } from 'next/navigation';
 
 const CategoryWrapper = styled.div`
     display: flex;
@@ -33,6 +34,8 @@ const CategoryData = styled.button`
 `;
 
 export default function CategoriesPage({ categories }) {
+    const router = useRouter();
+
     return (
         <>
             <Header></Header>
@@ -41,7 +44,7 @@ export default function CategoriesPage({ categories }) {
                 <CategoryWrapper>
                 {
                     categories && categories.map((category) => (
-                        <CategoryData key={category._id} onClick={() => window.location.href = '/products?category=' + category.name}>{category.name}</CategoryData>
+                        <CategoryData key={category._id} onClick={() => router.push('/products?category=' + category.name)}>{category.name}</CategoryData>
                     ))
                 }
                 </CategoryWrapper>

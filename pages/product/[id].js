@@ -10,7 +10,7 @@ import { Product } from "@/models/Product";
 import { useContext } from "react";
 import styled from "styled-components";
 import { AuthContext } from "../api/auth/auth";
-import { generateCartItem } from "../products";
+import { generateCartItem, getPrice } from "@/pages/products";
 import { CartContext } from "@/components/CartContext";
 
 const ColWrapper = styled.div`
@@ -33,7 +33,7 @@ const Price = styled.span`
 
 export default function ProductPage({ product }) {
     const { signed, user } = useContext(AuthContext);
-    const { cartProducts, setCartProducts, cartProductsSize, setCartProductsSize } = useContext(CartContext);
+    const { cartProducts, setCartProducts, cartProductsSize, setCartProductsSize, cartTotalValue, setCartTotalValue } = useContext(CartContext);
 
     return (
         <>
@@ -45,7 +45,7 @@ export default function ProductPage({ product }) {
                     </WhiteBox>
                     <div>
                         <Title>{product.title}</Title>
-                        <p style={{whiteSpace: "pre-line"}}>{product.description}</p>
+                        <p style={{ whiteSpace: "pre-line" }}>{product.description}</p>
                         <PriceRow>
                             <div>
                                 {signed && (
@@ -53,7 +53,14 @@ export default function ProductPage({ product }) {
                                 )}
                             </div>
                             <div>
-                                <Button primary={1} onClick={() => {setCartProducts(generateCartItem(product, 1, signed, user), cartProducts); setCartProductsSize(cartProductsSize + 1)}}><CartIcon></CartIcon>Adicionar ao carrinho</Button>
+                                <Button primary={1} onClick={
+                                    () => {
+                                        setCartProducts(generateCartItem(product, 1, signed, user, cartProducts));
+                                        setCartProductsSize(cartProductsSize + 1);
+                                        setCartTotalValue(cartTotalValue + getPrice(product, signed, user))
+                                    }}>
+                                    <CartIcon></CartIcon>Adicionar ao carrinho
+                                </Button>
                             </div>
                         </PriceRow>
                     </div>
@@ -65,7 +72,7 @@ export default function ProductPage({ product }) {
 
 export async function getServerSideProps(context) {
     await mongooseConnect();
-    const {id} = context.query;
+    const { id } = context.query;
     const product = await Product.findById(id);
     return {
         props: {
