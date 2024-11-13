@@ -78,7 +78,7 @@ export default function CartPage() {
     const { signed, user } = useContext(AuthContext);
     const { cartProducts, setCartProducts, clearCart
         , cartProductsSize, setCartProductsSize, cartTotalValue
-        , setCartTotalValue, shippingCost, setShippingCost 
+        , setCartTotalValue, shippingCost, setShippingCost
         , promotionCost, setPromotionCost
         , donationCost, setDonationCost
     } = useContext(CartContext);
@@ -112,6 +112,12 @@ export default function CartPage() {
     }
 
     async function goToPayment() {
+        let storeOpenedData = await axios.get('/api/store-settings?id=store.opened');
+        console.log("storeOpenedData", storeOpenedData.data[0]);
+        if (storeOpenedData.data && !storeOpenedData.data[0].value) {
+            alert('Loja fechada, aguarde para realizar a compra');
+            return;
+        }
         if (!signed) {
             alert('Faça login para continuar');
             return;
@@ -181,15 +187,17 @@ export default function CartPage() {
                                             </ProductInfoCell>
                                             <td>
                                                 <Button onClick={
-                                                    () => {setCartProducts(removeCartItem(cart.product, 1, cartProducts)); 
-                                                        setCartProductsSize(cartProductsSize -1); 
+                                                    () => {
+                                                        setCartProducts(removeCartItem(cart.product, 1, cartProducts));
+                                                        setCartProductsSize(cartProductsSize - 1);
                                                         setCartTotalValue(cartTotalValue - parseFloat(cart.unitPrice));
                                                     }}
                                                 >-</Button>
                                                 <QuantityLabel>{cart.quantity}</QuantityLabel>
                                                 <Button onClick={
-                                                    () => {setCartProducts(generateCartItem(cart.product, 1, signed, user, cartProducts)); 
-                                                        setCartProductsSize(cartProductsSize + 1); 
+                                                    () => {
+                                                        setCartProducts(generateCartItem(cart.product, 1, signed, user, cartProducts));
+                                                        setCartProductsSize(cartProductsSize + 1);
                                                         setCartTotalValue(cartTotalValue + parseFloat(cart.unitPrice));
                                                     }}
                                                 >+</Button>
@@ -205,14 +213,14 @@ export default function CartPage() {
                                 </tbody>
                             </Table>
                         )}
-                        <div style={{ position: 'absolute', bottom: '0', display: 'none'}}><span>Frete: </span></div>
+                        <div style={{ position: 'absolute', bottom: '0', display: 'none' }}><span>Frete: </span></div>
                     </Box>
                     {!!cartProducts.length && (
                         <Box>
                             <h2>Detalhes do Pedido</h2>
-                            <span style={{ display: 'block', marginBottom: '10px'}}>Frete: <b>${shippingCost}</b></span>
-                            <span style={{ display: 'block', marginBottom: '10px', display: 'none'}}>Desconto: <b>${promotionCost} </b><Button>Zerar desconto</Button></span>
-                            <span style={{ display: 'block', marginBottom: '10px', display: 'none'}}>Ajuda Agroecológica: <b>${donationCost} </b><Button>Adicionar</Button></span>
+                            <span style={{ display: 'block', marginBottom: '10px' }}>Frete: <b>${shippingCost}</b></span>
+                            <span style={{ display: 'block', marginBottom: '10px', display: 'none' }}>Desconto: <b>${promotionCost} </b><Button>Zerar desconto</Button></span>
+                            <span style={{ display: 'block', marginBottom: '10px', display: 'none' }}>Ajuda Agroecológica: <b>${donationCost} </b><Button>Adicionar</Button></span>
                             <span style={{ display: 'block', marginBottom: '10px' }}>Valor total do Pedido: <b>${cartTotalValue + shippingCost}</b></span>
                             <InputOrderDetail disabled type="text" placeholder="Nome" value={name} name="name" onChange={ev => setName(ev.target.value)} />
                             <InputOrderDetail disabled type="text" placeholder="Email"

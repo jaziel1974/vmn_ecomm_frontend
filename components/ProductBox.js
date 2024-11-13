@@ -2,9 +2,10 @@ import Button from "@/components/Button";
 import { AuthContext } from "@/pages/api/auth/auth";
 import { cartItemExists, generateCartItem, removeCartItem } from "@/pages/products";
 import Link from "next/link";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { CartContext } from "./CartContext";
+import axios from "axios";
 
 const ProductWrapper = styled.div`
     @media screen and (max-width: 768px) {
@@ -95,12 +96,32 @@ export default function ProductBox(productV) {
 
     const url = '/product/' + product._id;
 
-    const handleRemoveItem = (product) => {
+    const handleRemoveItem = async (product) => {
+        let storeOpenedData = await axios.get('/api/store-settings?id=store.opened');
+        console.log("storeOpenedData", storeOpenedData.data[0]);
+        if (storeOpenedData.data && !storeOpenedData.data[0].value) {
+            alert('Loja fechada, aguarde para realizar a compra');
+            return;
+        }
+
         if (cartItemExists(product, cartProducts)) {
             setCartProducts(removeCartItem(product, 1, cartProducts));
             setCartProductsSize(cartProductsSize - 1);
             setCartTotalValue(cartTotalValue - parseFloat(product.price))
         }
+    }
+
+    const handleAddItem = async (product) => {
+        let storeOpenedData = await axios.get('/api/store-settings?id=store.opened');
+        console.log("storeOpenedData", storeOpenedData.data[0]);
+        if (storeOpenedData.data && !storeOpenedData.data[0].value) {
+            alert('Loja fechada, aguarde para realizar a compra');
+            return;
+        }
+
+        setCartProducts(generateCartItem(product, 1, signed, user, cartProducts));
+        setCartProductsSize(cartProductsSize + 1);
+        setCartTotalValue(cartTotalValue + parseFloat(product.price))
     }
 
     return (
@@ -114,7 +135,7 @@ export default function ProductBox(productV) {
                         <Button block="true" onClick={() => handleRemoveItem(product)} addToCart={1}>
                             -
                         </Button>
-                        <Button block="true" onClick={() => { setCartProducts(generateCartItem(product, 1, signed, user, cartProducts)); setCartProductsSize(cartProductsSize + 1); setCartTotalValue(cartTotalValue + parseFloat(product.price)) }} addToCart={1}>
+                        <Button block="true" onClick={() => handleAddItem(product)} addToCart={1}>
                             +
                         </Button>
                     </AddToCartDiv>

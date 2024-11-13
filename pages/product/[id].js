@@ -12,6 +12,7 @@ import styled from "styled-components";
 import { AuthContext } from "../api/auth/auth";
 import { generateCartItem, getPrice } from "@/pages/products";
 import { CartContext } from "@/components/CartContext";
+import axios from "axios";
 
 const ColWrapper = styled.div`
     display: grid;
@@ -35,6 +36,19 @@ export default function ProductPage({ product }) {
     const { signed, user } = useContext(AuthContext);
     const { cartProducts, setCartProducts, cartProductsSize, setCartProductsSize, cartTotalValue, setCartTotalValue } = useContext(CartContext);
 
+    const handleAddItem = async (product) => {
+        let storeOpenedData = await axios.get('/api/store-settings?id=store.opened');
+        console.log("storeOpenedData", storeOpenedData.data[0]);
+        if (storeOpenedData.data && !storeOpenedData.data[0].value) {
+            alert('Loja fechada, aguarde para realizar a compra');
+            return;
+        }
+
+        setCartProducts(generateCartItem(product, 1, signed, user, cartProducts));
+        setCartProductsSize(cartProductsSize + 1);
+        setCartTotalValue(cartTotalValue + getPrice(product, signed, user))
+    }
+
     return (
         <>
             <Header />
@@ -53,12 +67,7 @@ export default function ProductPage({ product }) {
                                 )}
                             </div>
                             <div>
-                                <Button primary={1} onClick={
-                                    () => {
-                                        setCartProducts(generateCartItem(product, 1, signed, user, cartProducts));
-                                        setCartProductsSize(cartProductsSize + 1);
-                                        setCartTotalValue(cartTotalValue + getPrice(product, signed, user))
-                                    }}>
+                                <Button primary={1} onClick={() => handleAddItem(product)}>
                                     <CartIcon></CartIcon>Adicionar ao carrinho
                                 </Button>
                             </div>
