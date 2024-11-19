@@ -59,7 +59,7 @@ const ProductWrapper = styled.div`
     min-height: 95%;
     margin: 10px;
     background-color: #1B422E;
-    height: 300px;
+    height: 200px;
     background-size: cover;
     width: 600px;
 `;
@@ -97,23 +97,6 @@ export default function Featured({ products }) {
                     {products.map((product) =>
                         <motion.div key={product._id}>
                             <ProductWrapper style={{ backgroundImage: `url(${product.images[0]})` }}>
-                                <ProductData>
-                                    <ProductTitle>
-                                        <Title>{product.title}</Title>
-                                        <Desc>{product.description}</Desc>
-                                        <ButtonLink href={'/product/' + product._id} primary={1} style={{ width: '140px', fontSize: '0.8rem' }}>Vá para o produto</ButtonLink>
-                                    </ProductTitle>
-                                </ProductData>
-                                <DivButton>
-                                    {signed && (
-                                        <ButtonsWrapper>
-                                            <Button black={1} style={{ width: '140px' }} onClick={() => addToCart(product)}>
-                                                <CartIcon></CartIcon>
-                                                <span style={{ fontSize: '0.8rem' }}>Adicionar ao carrinho</span>
-                                            </Button>
-                                        </ButtonsWrapper>
-                                    )}
-                                </DivButton>
                             </ProductWrapper>
                         </motion.div>
                     )}
