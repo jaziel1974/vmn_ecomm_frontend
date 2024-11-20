@@ -79,7 +79,7 @@ const PriceRow = styled.div`
 const Price = styled.div`
     width: 100%;
     text-align: center;
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight:600;
     @media screen and (min-width: 768px) {
         font-size: 1.2rem;
@@ -146,7 +146,7 @@ export default function ProductBox(productV) {
                 <PriceRow>
                     {signed && product.stockAvailable && (
                         <Price>
-                            R${product.price} - Unidade
+                            R${product.price} <span style={{ fontSize: "1rem" }}>| {product?.properties?.UnitPresentation || "unidade"}</span>
                         </Price>
                     )}
                     {signed && !product.stockAvailable && (
