@@ -75,6 +75,7 @@ const InputOrderDetail = styled(Input)`
 `;
 
 export default function CartPage() {
+
     const { signed, user } = useContext(AuthContext);
     const { cartProducts, setCartProducts, clearCart
         , cartProductsSize, setCartProductsSize, cartTotalValue
@@ -83,6 +84,7 @@ export default function CartPage() {
         , donationCost, setDonationCost
     } = useContext(CartContext);
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [name, setName] = useState('');
     const [email, setEmail] = useState(user?.email);
     const [city, setCity] = useState('');
@@ -112,14 +114,19 @@ export default function CartPage() {
     }
 
     async function goToPayment() {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
         let storeOpenedData = await axios.get('/api/store-settings?id=store.opened');
         console.log("storeOpenedData", storeOpenedData.data[0]);
         if (storeOpenedData.data && !storeOpenedData.data[0].value) {
             alert('Loja fechada, aguarde para realizar a compra');
+            setIsSubmitting(false);
             return;
         }
         if (!signed) {
             alert('Faça login para continuar');
+            setIsSubmitting(false);
             return;
         }
 
@@ -139,6 +146,7 @@ export default function CartPage() {
             window.location = response.data.url;
         }
         alternativePayment();
+        setIsSubmitting(false);
     }
 
     if (isSuccess) {
@@ -231,7 +239,7 @@ export default function CartPage() {
                             <InputOrderDetail disabled type="text" placeholder="Rua, número" value={streetAddress} name="streetAddress" onChange={ev => setStreetAddress(ev.target.value)} />
                             <InputOrderDetail disabled type="text" placeholder="Complemento" value={country} name="country" onChange={ev => setCountry(ev.target.value)} />
                             <textarea rows={4} style={{ width: "99%" }} placeholder="Adicione aqui comentários sobre o pedido." value={customerNotes} name="customerNotes" onChange={ev => setCustomerNotes(ev.target.value)} />
-                            <Button black block marginBottom style={{ marginBotton: "10px" }} onClick={goToPayment}>Finalizar compra</Button>
+                            <Button black block marginBottom disabled={isSubmitting ? "disabled" : false} style={{ marginBotton: "10px" }} onClick={goToPayment}>Finalizar compra</Button>
                             <Button black block onClick={clearCart}>Limpar carrinho</Button>
                         </Box>
                     )}
