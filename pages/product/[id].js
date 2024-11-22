@@ -67,9 +67,11 @@ export default function ProductPage({ product }) {
                                 )}
                             </div>
                             <div>
+                            {signed && product.stockAvailable && (
                                 <Button primary={1} onClick={() => handleAddItem(product)}>
                                     <CartIcon></CartIcon>Adicionar ao carrinho
                                 </Button>
+                            )}
                             </div>
                         </PriceRow>
                     </div>
