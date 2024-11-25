@@ -219,7 +219,7 @@ export default function MyAccount({ childToParent }) {
                                         </div>
                                         <div style={{ position: "absolute", bottom: 0, borderTopStyle: "dashed", borderTopWidth: "1px", }}>
                                             <OrderDetailText>Total: R$ {getOrderTotal(order.line_items)}</OrderDetailText>
-                                            <OrderDetailText style={{ paddingBottom: "30px" }}>Data: {format(order.createdAt, 'dd/MM/yyyy')} | Pago: {order.paid ? 'Sim' : 'Não'} | Status: entregue</OrderDetailText>
+                                            <OrderDetailText style={{ paddingBottom: "30px" }}>Data: {format(order.createdAt, 'dd/MM/yyyy')} | Pago: {order.paid ? 'Sim' : 'Não'} | Status: {order?.status === 'delivered' ? 'Entregue' : 'Pendente'}</OrderDetailText>
                                         </div>
                                     </>
                                 )}
