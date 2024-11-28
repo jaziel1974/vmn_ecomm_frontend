@@ -93,6 +93,9 @@ export default function SigninPage() {
         if (!name | !email | !emailConfirm | !phoneNumber | !password) {
             setError('Preencha todos os campos');
             return;
+        } else if (phoneNumber.length < 8) {
+            setError('Preencha o telefone com o DDD');
+            return;
         } else if (email !== emailConfirm) {
             setError('Os e-mails devem ser iguais');
             return;
