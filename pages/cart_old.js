@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { sendEmail } from "../shared/mail";
 import { AuthContext } from "./api/auth/auth";
-import { generateCartItem, removeCartItem } from "./products";
+import { generateCartItem, removeCartItem } from "../src/app/products/page.tsx";
 import { calculatePromotion } from "@/components/PromotionEngine";
 
 const ColumnsWrapper = styled.div`

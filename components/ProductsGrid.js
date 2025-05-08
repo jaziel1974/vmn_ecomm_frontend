@@ -1,7 +1,7 @@
 import ProductBox from "@/components/ProductBox";
 import { useContext } from "react";
 import styled from "styled-components";
-import { getPrice } from "../pages/products";
+import { getPrice } from "@/lib/products";
 import { AuthContext } from "../pages/api/auth/auth";
 
 const StyledProductsGrid = styled.div`

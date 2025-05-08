@@ -1,8 +1,10 @@
+"use client"
+
 import Button from "@/components/Button";
 import ButtonLink from "@/components/ButtonLink";
 import { CartContext } from "@/components/CartContext";
 import CartIcon from "@/components/icons/CartIcon";
-import { generateCartItem, getPrice } from "@/pages/products";
+import { generateCartItem, getPrice } from "@/lib/products";
 import { motion } from "framer-motion";
 import { useContext, useEffect, useRef, useState } from "react";
 import { styled } from "styled-components";

@@ -1,7 +1,4 @@
-'use client'
-
 import { createContext, useEffect, useState } from "react";
-import { calculateShipping } from "./ShippingEngine";
 
 export const CartContext = createContext({});
 
@@ -37,7 +34,7 @@ export function CartContextProvider({ children }) {
             cartTotalValue, setCartTotalValue, 
             shippingCost, setShippingCost, 
             promotionCost, setPromotionCost,
-            donationCost, setDonationCost
+            donationCost, setDonationCost,
             }}>
             {children}
         </CartContext.Provider>

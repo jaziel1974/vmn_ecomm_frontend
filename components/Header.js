@@ -1,11 +1,14 @@
+'use client'
+
 import { background } from "@/lib/colors";
 import { AuthContext } from "@/pages/api/auth/auth";
-import { useRouter } from 'next/navigation';
 import { useContext, useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import BasketIcon from "./icons/Bakset";
 import { CartContext } from "./CartContext";
+import LogoImage from "../src/components/LogoImage";
+import MenuLabel from "./MenuLabel";
 
 const COLORS = {
     primaryDark: "#1B422E",
@@ -31,19 +34,6 @@ const StyledHeader = styled.header`
 
 const Logo = styled.div`
     text-decoration:none;
-`;
-
-const LogoImage = styled.img`
-    padding-top: 13px;
-    margin-left: 8px;
-    @media screen and (max-width: 768px) {
-        height: 42px;
-        width: 42px;
-    }
-    @media screen and (min-width: 769px) {
-        height: 62px;
-        width: 62px;
-    }
 `;
 
 const Wrapper = styled.div`
@@ -135,26 +125,6 @@ const ItemLink = styled(Link)`
   }
 `;
 
-const MenuLabel = styled.label`
-    @media screen and (min-width: 769px) {
-        display: none;
-    }
-    @media screen and (max-width: 768px) {
-        display: block;
-    }
-    background-color: ${background};
-    position: fixed;
-    top: 0.5rem;
-    right: 0.5rem;
-    border-radius: 50%;
-    height: 3rem;
-    width: 3rem;
-    cursor: pointer;
-    z-index: 1000;
-    box-shadow: 0 1rem 3rem rgba(182, 237, 200, 0.3);
-    text-align: center;
-`;
-
 const NavBackground = styled.div`
   position: fixed;
   right: 0;
@@ -168,41 +138,6 @@ const NavBackground = styled.div`
   z-index: 600;
   transform: ${(props) => (props.clicked ? "scale(80)" : "scale(0)")};
   transition: transform 0.8s;
-`;
-
-const Icon = styled.span`
-  position: relative;
-  background-color: ${(props) => (props.clicked ? "transparent" : "#FEBA51")};
-  width: 1.4rem;
-  height: 2px;
-  display: inline-block;
-  margin-top: 1.4rem;
-  transition: all 0.3s;
-  &::before,
-  &::after {
-    content: "";
-    background-color: #FEBA51;
-    width: 1.4rem;
-    height: 2px;
-    display: inline-block;
-    position: absolute;
-    left: 0;
-    transition: all 0.3s;
-  }
-  &::before {
-    top: ${(props) => (props.clicked ? "0" : "-0.8rem")};
-    transform: ${(props) => (props.clicked ? "rotate(135deg)" : "rotate(0)")};
-  }
-  &::after {
-    top: ${(props) => (props.clicked ? "0" : "0.8rem")};
-    transform: ${(props) => (props.clicked ? "rotate(-135deg)" : "rotate(0)")};
-  }
-  ${MenuLabel}:hover &::before {
-    top: ${(props) => (props.clicked ? "0" : "-0.7rem")};
-  }
-  ${MenuLabel}:hover &::after {
-    top: ${(props) => (props.clicked ? "0" : "0.7rem")};
-  }
 `;
 
 const Navigation = styled.nav`
@@ -253,10 +188,10 @@ const CartLink = styled(Link)`
 `;
 
 export default function Header() {
-    const router = useRouter();
+    const [mobileNavActive, setMobileNavActive] = useState(false);
+
     const { cartProductsSize } = useContext(CartContext);
 
-    const [mobileNavActive, setMobileNavActive] = useState(false);
     const handleClick = () => setMobileNavActive(!mobileNavActive);
 
     const signoutClick = (e) => {
@@ -282,35 +217,20 @@ export default function Header() {
 
             <Wrapper>
                 <DivNav>
-                    <Logo>
-                        <LogoImage
-                            src='/logo.png'
-                            alt='Verde Musgo Natural'
-                            onClick={() => router.push('/')}
-                        />
-                    </Logo>
+                    <Logo><LogoImage/></Logo>
 
                     <StyledNav style={{ paddingTop: "25px" }}>
                         {!signed && (
-                            <NavLink href={'/signin'}>Entrar</NavLink>
+                            <NavLink href={'/api/auth/signin'}>Entrar</NavLink>
                         )}
-                        {signed && (
-                            <NavLink href=''
-                                onClick={e => {
-                                    e.preventDefault();
-                                    handleLogin();
-                                }}>Sair
-                            </NavLink>
-                        )}
+                        <NavLink href='/api/auth/logout'>Sair</NavLink>
                     </StyledNav>
                 </DivNav>
 
-                <MenuLabel htmlFor="navi-toggle" onClick={handleClick}>
-                    <Icon clicked={mobileNavActive}>&nbsp;</Icon>
-                </MenuLabel>
+                <MenuLabel></MenuLabel>
 
-                <NavBackground clicked={mobileNavActive}>&nbsp;</NavBackground>
-                <Navigation clicked={mobileNavActive}>
+                <NavBackground clicked={mobileNavActive.toString()}>&nbsp;</NavBackground>
+                <Navigation clicked={mobileNavActive.toString()}>
                     <List>
                         <li>
                             {!signed && (
@@ -329,9 +249,9 @@ export default function Header() {
             </Wrapper>
 
             <StyledNavDiv style={{ justifyContent: "center" }}>
-                <NavLink href={'/'} inactive={false}>Principal</NavLink>
-                <NavLink href={'/products'} inactive={false}>Todos os produtos</NavLink>
-                <NavLink href={'/categories'} inactive={false}>Categorias</NavLink>
+                <NavLink href={'/'} inactive={false.toString()}>Principal</NavLink>
+                <NavLink href={'/products'} inactive={false.toString()}>Todos os produtos</NavLink>
+                <NavLink href={'/categories'} inactive={false.toString()}>Categorias</NavLink>
                 {signed && (<NavLink href={'/myAccount'} >Conta</NavLink>)}
             </StyledNavDiv>
         </StyledHeader>

@@ -10,7 +10,7 @@ import { Product } from "@/models/Product";
 import { useContext } from "react";
 import styled from "styled-components";
 import { AuthContext } from "../api/auth/auth";
-import { generateCartItem, getPrice } from "@/pages/products";
+import { generateCartItem, getPrice } from "@/lib/products";
 import { CartContext } from "@/components/CartContext";
 import axios from "axios";
 

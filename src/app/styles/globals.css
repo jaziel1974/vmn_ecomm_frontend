@@ -1,0 +1,10 @@
+/* filepath: /home/jaziel/NextJs/ecommerce/ecommerce-front/src/styles/globals.css */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+body{
+    background-color: #c5f0c2;
+    padding:0;
+    margin:0;
+  }

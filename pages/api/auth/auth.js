@@ -1,3 +1,5 @@
+'use client';
+
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { decrypt, encrypt } from "../../../shared/crypto";

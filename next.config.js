@@ -8,7 +8,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-
+  transpilePackages: ['next-auth'],
 }
 
 module.exports = nextConfig

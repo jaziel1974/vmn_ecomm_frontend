@@ -1,6 +1,8 @@
+"use client"
+
 import Button from "@/components/Button";
 import { AuthContext } from "@/pages/api/auth/auth";
-import { cartItemExists, generateCartItem, removeCartItem } from "@/pages/products";
+import { cartItemExists, generateCartItem, removeCartItem } from "@/lib/products";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
