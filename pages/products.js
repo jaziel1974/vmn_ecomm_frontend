@@ -112,6 +112,7 @@ export async function getServerSideProps(params) {
     let category = params?.query?.category;
 
     await mongooseConnect();
+    const advertisementCataegory = await Category.find({ name: "Advertisement" });
     let products = [];
     if (category) {
         let categoryData = await Category.findOne({ name: category });
@@ -123,12 +124,12 @@ export async function getServerSideProps(params) {
         }
     }
     else if (!search) {
-        products = await Product.find({}, null, { sort: { 'stockAvailable': -1, 'title': 1 } });
+        products = await Product.find({category: { $ne: advertisementCataegory[0]._id}}, null, { sort: { 'stockAvailable': -1, 'title': 1 } });
     }
     else {
         products = await Product.find({ title: { $regex: search, $options: 'i' } }, null, { sort: { 'stockAvailable': -1, 'title': 1 } });
     }
-    const latestProducts = await Product.find({ stockAvailable: true }, null, { sort: { 'createdAt': -1 }, limit: 10 });
+    const latestProducts = await Product.find({category: { $ne: advertisementCataegory[0]._id}, stockAvailable: true }, null, { sort: { 'createdAt': -1 }, limit: 10 });
 
     return {
         props: {
