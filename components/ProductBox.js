@@ -42,8 +42,13 @@ const WhiteBox = styled(Link)`
     align-items: center;
     justify-content: center;
     border-radius: 10px;
+    overflow: hidden; /* Prevent any overflow */
     img{
         max-width: 80%;
+        max-height: 80%; /* Constrain height as well */
+        object-fit: contain; /* Maintain aspect ratio while fitting */
+        width: auto;
+        height: auto;
     }
     `;
 
