@@ -31,12 +31,7 @@ const AddToCartDiv = styled.div`
 
 const WhiteBox = styled(Link)`
     background-color: #e3ffe1;
-    @media screen and (min-width: 768px) {
-        height: 200px;
-    }
-    @media screen and (max-width: 767px) {
-        height: 150px;
-    }
+    height: 200px;
     text-align: center;
     display: flex;
     align-items: center;

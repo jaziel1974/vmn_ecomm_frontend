@@ -1,7 +1,7 @@
 import { background } from "@/lib/colors";
 import { AuthContext } from "@/pages/api/auth/auth";
 import { useRouter } from 'next/navigation';
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import BasketIcon from "./icons/Bakset";
@@ -15,26 +15,45 @@ const StyledHeader = styled.header`
     left: 0;
     right: 0;
     z-index: 100;
+    padding: 0 15px;
     @media screen and (max-width: 768px) {
-        display: inline-block;
-        height: 90px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
-    @media screen and (min-width: 768px) {
+    @media screen and (min-width: 769px) {
         height: 130px;
+        display: block;
+    }
+`;
+
+const TopBar = styled.div`
+    @media screen and (min-width: 769px) {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+    }
+    @media screen and (max-width: 768px) {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
     }
 `;
 
 const Logo = styled.div`
     text-decoration: none;
+    display: flex;
+    align-items: center;
 `;
 
 const LogoImage = styled.img`
-    padding-top: 13px;
-    margin-left: 8px;
     cursor: pointer;
     @media screen and (max-width: 768px) {
-        height: 42px;
-        width: 42px;
+        height: 40px;
+        width: 40px;
     }
     @media screen and (min-width: 769px) {
         height: 62px;
@@ -42,124 +61,291 @@ const LogoImage = styled.img`
     }
 `;
 
-const Wrapper = styled.div`
-    justify-content: space-between;
+// Hamburger Menu Button
+const HamburgerButton = styled.button`
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 1001;
+    
     @media screen and (max-width: 768px) {
-        column-gap: 40px;
-    }
-`;
-
-const DivNav = styled.div`
-    @media screen and (min-width: 768px) {
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 `;
 
-const StyledNavDiv = styled.div`
-    display: flex;
-    gap: 15px;
-    width: 100%;
+const HamburgerLine = styled.span`
+    width: 25px;
+    height: 3px;
+    background-color: #FEBA51;
+    margin: 3px 0;
+    transition: 0.3s;
+    transform-origin: center;
+    
+    ${props => props.isOpen && `
+        &:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        &:nth-child(2) {
+            opacity: 0;
+        }
+        &:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+    `}
 `;
 
-const StyledNav = styled.nav`
+// Mobile Menu Overlay
+const MobileMenuOverlay = styled.div`
+    display: none;
+    
+    @media screen and (max-width: 768px) {
+        display: ${props => props.isOpen ? 'block' : 'none'};
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+`;
+
+const MobileMenu = styled.nav`
+    display: none;
+    
+    @media screen and (max-width: 768px) {
+        display: ${props => props.isOpen ? 'flex' : 'none'};
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background-color: ${background};
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-height: calc(100vh - 70px);
+        overflow-y: auto;
+    }
+`;
+
+// Desktop Navigation
+const DesktopNav = styled.nav`
+    @media screen and (max-width: 768px) {
+        display: none;
+    }
+    @media screen and (min-width: 769px) {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        padding: 10px 0;
+        border-top: 1px solid rgba(254, 186, 81, 0.3);
+    }
+`;
+
+// Auth Navigation (Desktop only)
+const AuthNav = styled.div`
     display: flex;
     gap: 15px;
-    padding-right: 5px;
-    height: 40px;
-    font-size: 0.8rem;
+    align-items: center;
+    
     @media screen and (max-width: 768px) {
-        display: none; /* Hide auth nav on mobile for simplicity */
+        display: none;
     }
 `;
 
 const NavLink = styled(Link)`
     display: flex;
+    align-items: center;
     color: #FEBA51;
     text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        background-color: rgba(254, 186, 81, 0.1);
+        transform: translateY(-2px);
+    }
+    
     @media screen and (max-width: 768px) {
-        font-size: 0.7rem;
+        font-size: 1rem;
+        padding: 15px 10px;
+        border-bottom: 1px solid rgba(254, 186, 81, 0.2);
+        justify-content: flex-start;
+        
+        &:last-child {
+            border-bottom: none;
+        }
     }
-    @media screen and (min-width: 768px) {
-        font-size: 1.3rem;
-        margin-bottom: 20px;
+    @media screen and (min-width: 769px) {
+        font-size: 1.1rem;
     }
-    height: 25px;
 `;
 
-const NavCartLink = styled.nav`
-    position: fixed;
-    top: 10px;
-    right: 47%;
-    z-index: 2000;
+const CartContainer = styled.div`
+    display: flex;
+    align-items: center;
+    
+    @media screen and (max-width: 768px) {
+        position: relative;
+    }
+    @media screen and (min-width: 769px) {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+    }
 `;
 
 const CartLink = styled(Link)`
     display: flex;
+    align-items: center;
     color: #FEBA51;
     text-decoration: none;
-    @media screen and (max-width: 768px) {
-        font-size: 0.8rem;
+    position: relative;
+    padding: 5px;
+    
+    &:hover {
+        transform: scale(1.1);
     }
-    @media screen and (min-width: 768px) {
-        font-size: 1.2rem;
-        margin-bottom: 20px;
-    }
-    height: 25px;
+`;
+
+const CartBadge = styled.span`
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ff4757;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
 `;
 
 export default function Header() {
     const router = useRouter();
     const { cartProductsSize } = useContext(CartContext);
     const { signed, signout } = useContext(AuthContext);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const handleLogin = () => {
         signout();
     }
 
+    const toggleMobileMenu = () => {
+        setMobileMenuOpen(!mobileMenuOpen);
+    };
+
+    const closeMobileMenu = () => {
+        setMobileMenuOpen(false);
+    };
+
+    const navigation = [
+        { href: '/', label: 'Principal' },
+        { href: '/products', label: 'Todos os produtos' },
+        { href: '/categories', label: 'Categorias' },
+        { href: '/subscribe', label: '🔔 Notificações' },
+        { href: '/test-notifications', label: '🧪 Test Push' },
+    ];
+
     return (
         <StyledHeader>
-            <NavCartLink>
-                <CartLink href={'/cart'}>
-                    <BasketIcon style={{ width: "40px" }} />
-                    {cartProductsSize > 0 && (cartProductsSize)}
-                </CartLink>
-            </NavCartLink>
+            <TopBar>
+                <Logo>
+                    <LogoImage
+                        src='/logo.png'
+                        alt='Verde Musgo Natural'
+                        onClick={() => router.push('/')}
+                    />
+                </Logo>
 
-            <Wrapper>
-                <DivNav>
-                    <Logo>
-                        <LogoImage
-                            src='/logo.png'
-                            alt='Verde Musgo Natural'
-                            onClick={() => router.push('/')}
-                        />
-                    </Logo>
+                {/* Desktop Auth Navigation */}
+                <AuthNav>
+                    {!signed && (
+                        <NavLink href={'/signin'}>Entrar</NavLink>
+                    )}
+                    {signed && (
+                        <>
+                            <NavLink href={'/myAccount'}>Minha Conta</NavLink>
+                            <NavLink href='' onClick={e => {
+                                e.preventDefault();
+                                handleLogin();
+                            }}>Sair</NavLink>
+                        </>
+                    )}
+                </AuthNav>
 
-                    <StyledNav style={{ paddingTop: "25px" }}>
-                        {!signed && (
-                            <NavLink href={'/signin'}>Entrar</NavLink>
+                {/* Cart (always visible) */}
+                <CartContainer>
+                    <CartLink href={'/cart'}>
+                        <BasketIcon style={{ width: "35px", height: "35px" }} />
+                        {cartProductsSize > 0 && (
+                            <CartBadge>{cartProductsSize}</CartBadge>
                         )}
-                        {signed && (
-                            <NavLink href=''
-                                onClick={e => {
-                                    e.preventDefault();
-                                    handleLogin();
-                                }}>Sair
-                            </NavLink>
-                        )}
-                    </StyledNav>
-                </DivNav>
-            </Wrapper>            
-            
-            <StyledNavDiv style={{ justifyContent: "center" }}>
-                <NavLink href={'/'}>Principal</NavLink>
-                <NavLink href={'/products'}>Todos os produtos</NavLink>
-                <NavLink href={'/categories'}>Categorias</NavLink>
-                <NavLink href={'/subscribe'}>🔔 Notificações</NavLink>
-                <NavLink href={'/test-notifications'}>🧪 Test Push</NavLink>
-                {signed && (<NavLink href={'/myAccount'}>Conta</NavLink>)}
-            </StyledNavDiv>
+                    </CartLink>
+                </CartContainer>
+
+                {/* Mobile Hamburger Button */}
+                <HamburgerButton onClick={toggleMobileMenu} aria-label="Toggle menu">
+                    <HamburgerLine isOpen={mobileMenuOpen} />
+                    <HamburgerLine isOpen={mobileMenuOpen} />
+                    <HamburgerLine isOpen={mobileMenuOpen} />
+                </HamburgerButton>
+            </TopBar>
+
+            {/* Desktop Navigation */}
+            <DesktopNav>
+                {navigation.map((item) => (
+                    <NavLink key={item.href} href={item.href}>
+                        {item.label}
+                    </NavLink>
+                ))}
+                {signed && (
+                    <NavLink href={'/myAccount'}>Conta</NavLink>
+                )}
+            </DesktopNav>
+
+            {/* Mobile Menu Overlay */}
+            <MobileMenuOverlay isOpen={mobileMenuOpen} onClick={closeMobileMenu} />
+
+            {/* Mobile Navigation */}
+            <MobileMenu isOpen={mobileMenuOpen}>
+                {navigation.map((item) => (
+                    <NavLink key={item.href} href={item.href} onClick={closeMobileMenu}>
+                        {item.label}
+                    </NavLink>
+                ))}
+                
+                {/* Mobile Auth Links */}
+                {!signed && (
+                    <NavLink href={'/signin'} onClick={closeMobileMenu}>
+                        Entrar
+                    </NavLink>
+                )}
+                {signed && (
+                    <>
+                        <NavLink href={'/myAccount'} onClick={closeMobileMenu}>
+                            Minha Conta
+                        </NavLink>
+                        <NavLink href='' onClick={e => {
+                            e.preventDefault();
+                            handleLogin();
+                            closeMobileMenu();
+                        }}>
+                            Sair
+                        </NavLink>
+                    </>
+                )}
+            </MobileMenu>
         </StyledHeader>
     )
 }
