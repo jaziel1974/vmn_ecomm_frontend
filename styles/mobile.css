@@ -1,0 +1,95 @@
+/* Mobile-first responsive styles for PWA */
+
+/* Ensure app takes full height on mobile */
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Mobile touch targets */
+button, a, input {
+  min-height: 44px; /* Apple's recommended touch target size */
+  min-width: 44px;
+}
+
+/* Prevent zoom on input focus (iOS) */
+input, select, textarea {
+  font-size: 16px;
+}
+
+/* Safe area insets for notched devices */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Mobile navigation adjustments */
+@media (max-width: 768px) {
+  /* Header adjustments for mobile */
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Main content offset for fixed header */
+  main {
+    padding-top: calc(60px + env(safe-area-inset-top));
+  }
+
+  /* Cart and product grids */
+  .product-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+  }
+
+  /* Forms on mobile */
+  .form-container {
+    padding: 20px 15px;
+  }
+
+  /* Buttons on mobile */
+  button {
+    padding: 12px 20px;
+    font-size: 16px;
+  }
+}
+
+/* PWA install prompt styles */
+.pwa-install-prompt {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  background: #1B422E;
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 2000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pwa-install-prompt button {
+  background: #FEBA51;
+  color: #1B422E;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+  .mobile-landscape-hide {
+    display: none;
+  }
+}

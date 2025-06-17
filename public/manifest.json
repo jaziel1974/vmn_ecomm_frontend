@@ -1,0 +1,33 @@
+{
+  "name": "Verde Musgo Natural - E-commerce",
+  "short_name": "VMN Store",
+  "description": "Verde Musgo Natural e-commerce mobile app",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#c5f0c2",
+  "theme_color": "#1B422E",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["shopping", "business"],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "320x640",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
+}
