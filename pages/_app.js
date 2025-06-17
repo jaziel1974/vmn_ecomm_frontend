@@ -1,6 +1,7 @@
 import { CartContextProvider } from "@/components/CartContext";
 import { createGlobalStyle } from "styled-components";
 import { AuthProvider } from "./api/auth/auth";
+import GlobalPushNotifications from "@/components/GlobalPushNotifications";
 
 
 const GlobalStyles = createGlobalStyle`
@@ -23,6 +24,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
   return (
     <AuthProvider>
       <GlobalStyles />
+      <GlobalPushNotifications />
       <CartContextProvider>
         <Component {...pageProps} />
       </CartContextProvider>

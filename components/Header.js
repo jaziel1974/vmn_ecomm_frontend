@@ -309,8 +309,7 @@ export default function Header() {
                     <Icon clicked={mobileNavActive}>&nbsp;</Icon>
                 </MenuLabel>
 
-                <NavBackground clicked={mobileNavActive}>&nbsp;</NavBackground>
-                <Navigation clicked={mobileNavActive}>
+                <NavBackground clicked={mobileNavActive}>&nbsp;</NavBackground>                <Navigation clicked={mobileNavActive}>
                     <List>
                         <li>
                             {!signed && (
@@ -324,14 +323,19 @@ export default function Header() {
                                 </ItemLink>
                             )}
                         </li>
+                        <li>
+                            <ItemLink onClick={handleClick} href="/subscribe">
+                                🔔 Notificações
+                            </ItemLink>
+                        </li>
                     </List>
                 </Navigation>
-            </Wrapper>
-
-            <StyledNavDiv style={{ justifyContent: "center" }}>
+            </Wrapper>            <StyledNavDiv style={{ justifyContent: "center" }}>
                 <NavLink href={'/'} inactive={false}>Principal</NavLink>
                 <NavLink href={'/products'} inactive={false}>Todos os produtos</NavLink>
                 <NavLink href={'/categories'} inactive={false}>Categorias</NavLink>
+                <NavLink href={'/subscribe'} inactive={false}>🔔 Notificações</NavLink>
+                <NavLink href={'/test-notifications'} inactive={false}>🧪 Test Push</NavLink>
                 {signed && (<NavLink href={'/myAccount'} >Conta</NavLink>)}
             </StyledNavDiv>
         </StyledHeader>

@@ -5,11 +5,13 @@ import { mongooseConnect } from "@/lib/mongoose";
 import NewProducts from "@/components/NewProducts";
 import Center from "@/components/Center";
 import { Category } from "@/models/Category";
+import PushSetup from "@/components/PushSetup";
 
 export default function HomePage({ featuredProducts, newProducts }) {
   return (
     <div>
       <Header></Header>
+      <PushSetup />
       <Center>
         <Featured products={featuredProducts}></Featured>
         <NewProducts products={newProducts}></NewProducts>
