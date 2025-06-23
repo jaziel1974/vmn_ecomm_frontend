@@ -23,7 +23,7 @@ const StyledHeader = styled.header`
         justify-content: space-between;
     }
     @media screen and (min-width: 769px) {
-        height: 130px;
+        /* Removed fixed height to allow content to define header height */
         display: block;
     }
 `;
@@ -191,15 +191,7 @@ const NavLink = styled(Link)`
 const CartContainer = styled.div`
     display: flex;
     align-items: center;
-    
-    @media screen and (max-width: 768px) {
-        position: relative;
-    }
-    @media screen and (min-width: 769px) {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-    }
+    position: relative;
 `;
 
 const CartLink = styled(Link)`
@@ -254,7 +246,6 @@ export default function Header() {
         { href: '/products', label: 'Todos os produtos' },
         { href: '/categories', label: 'Categorias' },
         { href: '/subscribe', label: '🔔 Notificações' },
-        { href: '/test-notifications', label: '🧪 Test Push' },
     ];
 
     return (
@@ -267,6 +258,16 @@ export default function Header() {
                         onClick={() => router.push('/')}
                     />
                 </Logo>
+
+                {/* Cart (always visible) */}
+                <CartContainer>
+                    <CartLink href={'/cart'}>
+                        <BasketIcon style={{ width: "35px", height: "35px" }} />
+                        {cartProductsSize > 0 && (
+                            <CartBadge>{cartProductsSize}</CartBadge>
+                        )}
+                    </CartLink>
+                </CartContainer>
 
                 {/* Desktop Auth Navigation */}
                 <AuthNav>
@@ -283,16 +284,6 @@ export default function Header() {
                         </>
                     )}
                 </AuthNav>
-
-                {/* Cart (always visible) */}
-                <CartContainer>
-                    <CartLink href={'/cart'}>
-                        <BasketIcon style={{ width: "35px", height: "35px" }} />
-                        {cartProductsSize > 0 && (
-                            <CartBadge>{cartProductsSize}</CartBadge>
-                        )}
-                    </CartLink>
-                </CartContainer>
 
                 {/* Mobile Hamburger Button */}
                 <HamburgerButton onClick={toggleMobileMenu} aria-label="Toggle menu">

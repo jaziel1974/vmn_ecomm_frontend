@@ -4,12 +4,7 @@ const StyledDiv = styled.div`
     background-color: #c5f0c2;
     margin: 0 auto;
     position: relative;
-    @media screen and (max-width: 768px) {
-        padding-top: 90px;
-    }
-    @media screen and (min-width: 768px) {
-        padding-top: 130px;
-    }
+    padding-top: 30px;
 
 `;
 

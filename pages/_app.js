@@ -24,6 +24,16 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Responsive padding for fixed header */
+body {
+  padding-top: 70px;
+}
+@media screen and (min-width: 769px) {
+  body {
+    padding-top: 150px; /* Increased to accommodate taller header */
+  }
+}
+
 /* Mobile touch targets */
 button, a, input {
   min-height: 44px;
