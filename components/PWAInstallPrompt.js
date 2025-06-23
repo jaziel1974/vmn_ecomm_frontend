@@ -3,19 +3,32 @@ import styled from 'styled-components';
 
 const InstallPrompt = styled.div`
   position: fixed;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
+  bottom: 0;
+  left: 0;
+  right: 0;
   background: #1B422E;
   color: white;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  padding: 15px 20px;
+  border-radius: 0;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
   z-index: 2000;
   display: flex;
   justify-content: space-between;
   align-items: center;
   animation: slideUp 0.3s ease-out;
+  width: 100vw;
+  max-width: 100vw;
+
+  @media (min-width: 600px) {
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    border-radius: 8px;
+    width: auto;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 15px 32px;
+  }
 
   @keyframes slideUp {
     from {
