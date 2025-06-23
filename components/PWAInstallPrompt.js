@@ -80,10 +80,12 @@ export default function PWAInstallPrompt() {
     // Only run in browser
     if (typeof window === 'undefined') return;
 
+    /*
     // Check if already dismissed this session (only in browser)
     if (sessionStorage.getItem('pwa-install-dismissed') === 'true') {
       setIsDismissed(true);
     }
+      */
 
     // Check if running as standalone (already installed)
     setIsStandalone(window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches);
