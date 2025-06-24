@@ -2,11 +2,13 @@ import Header from '@/components/Header';
 import Center from '@/components/Center';
 import WhiteBox from '@/components/WhiteBox';
 import ManualSubscribe from '@/components/ManualSubscribe';
+import PushSetup from '@/components/PushSetup';
 
 export default function SubscribePage() {
   return (
     <>
       <Header />
+      <PushSetup />
       <Center>
         <WhiteBox>
           <h1>Notification Preferences</h1>

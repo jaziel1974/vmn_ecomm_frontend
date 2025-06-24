@@ -11,7 +11,6 @@ export default function HomePage({ featuredProducts, newProducts }) {
   return (
     <div>
       <Header></Header>
-      <PushSetup />
       <Center>
         <Featured products={featuredProducts}></Featured>
         <NewProducts products={newProducts}></NewProducts>
