@@ -32,6 +32,20 @@ const ModalPrompt = styled.div`
   }
 `;
 
+const InstallButton = styled.button`
+  background: #FEBA51;
+  color: #1B422E;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 18px;
+  &:hover {
+    background: #e6a54a;
+  }
+`;
+
 const CloseButton = styled.button`
   background: transparent;
   color: white;
@@ -43,23 +57,56 @@ const CloseButton = styled.button`
 
 export default function PWAInstallPrompt() {
   const [visible, setVisible] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
     setVisible(true);
-    const timer = setTimeout(() => setVisible(false), 5000); // Show for 5 seconds
-    return () => clearTimeout(timer);
+    const timer = setTimeout(() => setVisible(false), 5000);
+    // Detect iOS
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent));
+    // Listen for beforeinstallprompt (Android/Chrome)
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
   }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      setDeferredPrompt(null);
+      setVisible(false);
+    }
+  };
 
   if (!visible) return null;
 
   return (
     <ModalPrompt>
       <div>
-        <strong>📱 Instale o VMN Store!</strong>
-        <br />
-        <small>Adicione o app à sua tela inicial para uma experiência completa.</small>
+        {isIOS ? (
+          <small>Abra o menu de compartilhamento e toque em "Adicionar à Tela de Início".</small>
+        ) : deferredPrompt ? (
+          <small>Clique para adicionar o app à tela inicial para acesso rápido.</small>
+        ) : (
+          <small>Adicione à tela inicial para uma experiência completa.</small>
+        )}
       </div>
-      <CloseButton onClick={() => setVisible(false)}>×</CloseButton>
+      <div>
+        {!isIOS && deferredPrompt && (
+          <InstallButton onClick={handleInstallClick}>
+            Instalar
+          </InstallButton>
+        )}
+        <CloseButton onClick={() => setVisible(false)}>×</CloseButton>
+      </div>
     </ModalPrompt>
   );
 }
