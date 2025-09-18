@@ -107,6 +107,13 @@ export default function CartPage() {
         }
     }, []);
 
+    useEffect(() => {
+        if (user?.user?.data?.customer) {
+            setName(user.user.data.customer.name || '');
+            setStreetAddress(user.user.data.customer.address || '');
+        }
+    }, [user]);
+
     function alternativePayment() {
         clearCart();
         setIsSuccess(true);
