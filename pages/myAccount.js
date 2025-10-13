@@ -8,19 +8,12 @@ import styled, { css } from "styled-components";
 import { AuthContext } from "./api/auth/auth";
 import Center from "@/components/Center";
 import OrdersMenu from '@/components/OrdersMenu';
+import Wrapper from '@/components/Wrapper';
 
 const COLORS = {
     primaryDark: "#1B422E",
     primaryLight: "#FEBA51",
 };
-
-const Wrapper = styled.div`
-    width: 100%;
-    position: relative;
-    @media screen and (max-width: 768px) {
-    
-    }
-`;
 
 // Menu moved to shared component `OrdersMenu`
 
@@ -105,17 +98,18 @@ export default function MyAccount({ childToParent }) {
     const { user } = useContext(AuthContext);
 
     const refreshOrders = (e) => {
-        e.preventDefault();
-        if (user?.email) {
-            axios.get('/api/orders?email=' + user.email)
-                .then(response => {
-                    setOrders(response.data);
-                })
-        }
-        else {
+        // kept for compatibility: the OrdersMenu will call its own fetch; this handler can be empty
+        if (e && e.preventDefault) e.preventDefault();
+    }
+
+    function handleOrdersLoaded(list) {
+        if (!list || list.length === 0) {
+            // if user not logged, show message
+            if (!user?.email) setError('Por favor, faça o login');
             setOrders([]);
-            setError('Por favor, faça o login');
+            return;
         }
+        setOrders(list);
     }
 
     const getOrderTotal = (line_items) => {
@@ -134,7 +128,7 @@ export default function MyAccount({ childToParent }) {
                     <ErrorContent><LabelError>{error}</LabelError></ErrorContent>
                 }
                 <Wrapper>
-                    <OrdersMenu onRefresh={refreshOrders} />
+                    <OrdersMenu onRefresh={refreshOrders} userEmail={user?.email} onOrders={handleOrdersLoaded} limit={3} />
                     <OrderTitleDiv>
                         {orders && orders.map((order) => (
                             <OrderTitleInner>

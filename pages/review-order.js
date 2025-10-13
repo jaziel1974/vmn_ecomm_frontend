@@ -8,6 +8,7 @@ import { AuthContext } from './api/auth/auth';
 import StarRating from '@/components/StarRating';
 import styled from 'styled-components';
 import OrdersMenu from '@/components/OrdersMenu';
+import Wrapper from '@/components/Wrapper';
 
 export default function ReviewOrderPage() {
     const { signed, user } = useContext(AuthContext);
@@ -22,23 +23,17 @@ export default function ReviewOrderPage() {
 
     const refreshOrders = (e) => {
         if (e && e.preventDefault) e.preventDefault();
-        const email = user?.email;
-        if (email) {
-            axios.get('/api/orders?email=' + encodeURIComponent(email) + '&limit=3')
-                .then(res => setOrders(res.data || []))
-                .catch(() => setOrders([]));
-        }
     }
 
+    function handleOrdersLoaded(list) {
+        setOrders(list || []);
+    }
+
+    // Orders are loaded by OrdersMenu via onOrders callback
     useEffect(() => {
-        if (!signed) return;
-        // fetch user's orders by email
-        const email = user?.email;
-        if (!email) return;
-        axios.get('/api/orders?email=' + encodeURIComponent(email) + '&limit=3').then(res => {
-            setOrders(res.data || []);
-        }).catch(() => setOrders([]));
-    }, [signed, user?.email]);
+        // clear orders when sign out
+        if (!signed) setOrders([]);
+    }, [signed]);
 
     // If the page was opened with ?orderId=..., preselect that order when orders are available
     useEffect(() => {
@@ -165,9 +160,10 @@ export default function ReviewOrderPage() {
 
     return (
         <>
-            <Header />
+            <Header/>
             <Center>
-                <Container>
+                <Wrapper>
+                    <OrdersMenu onRefresh={refreshOrders} href={'/myAccount'} userEmail={user?.email} onOrders={handleOrdersLoaded} limit={3} />
                     <Card>
                         <H1>Avaliar Pedido</H1>
 
@@ -222,30 +218,15 @@ export default function ReviewOrderPage() {
                             </div>
                         )}
                     </Card>
-                </Container>
+                </Wrapper>
             </Center>
         </>
     );
 }
 
-const Container = styled.div`
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    padding: 20px;
-`;
-
 const Card = styled.div`
     max-width: 900px;
-    width: 100%;
-    background: #fff;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    @media (max-width: 768px) {
-        padding: 16px;
-        margin: 0 12px;
-    }
+    place-self: center;
 `;
 
 const H1 = styled.h1`

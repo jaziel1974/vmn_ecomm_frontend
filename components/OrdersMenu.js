@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import styled, { css } from 'styled-components';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 const COLORS = {
     primaryDark: "#1B422E",
@@ -55,11 +57,37 @@ const NavLink = styled(Link)`
     }
 `;
 
-export default function OrdersMenu({ onRefresh }) {
+export default function OrdersMenu({ onRefresh, href = '#', userEmail, limit = 3, onOrders }) {
+    async function fetchOrders() {
+        if (!userEmail || !onOrders) return;
+        try {
+            const res = await axios.get('/api/orders?email=' + encodeURIComponent(userEmail) + '&limit=' + encodeURIComponent(limit));
+            onOrders(res.data || []);
+        } catch (e) {
+            console.error('orders fetch error', e);
+            onOrders([]);
+        }
+    }
+
+    useEffect(() => {
+        // auto load when mounted if possible
+        if (userEmail && onOrders) fetchOrders();
+    }, [userEmail]);
+
+    function handleClick(e) {
+        if (href === '#') {
+            if (e && e.preventDefault) e.preventDefault();
+            // refresh via component
+            fetchOrders();
+            if (onRefresh) onRefresh(e);
+        }
+        // otherwise let the link navigate
+    }
+
     return (
         <Menu>
             <StyledNav>
-                <NavLink color={"dark"} href={'#'} onClick={(e) => { if (e && e.preventDefault) e.preventDefault(); if (onRefresh) onRefresh(e); }}>
+                <NavLink color={"dark"} href={href} onClick={handleClick}>
                     Meus pedidos
                 </NavLink>
             </StyledNav>
