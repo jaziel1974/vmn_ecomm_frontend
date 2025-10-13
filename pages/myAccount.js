@@ -4,6 +4,8 @@ import axios from "axios";
 import { format } from 'date-fns';
 import Link from "next/link";
 import { useContext, useState } from "react";
+import { useRouter } from 'next/router';
+import Button from '@/components/Button';
 import styled, { css } from "styled-components";
 import { AuthContext } from "./api/auth/auth";
 import Center from "@/components/Center";
@@ -96,6 +98,7 @@ export default function MyAccount({ childToParent }) {
     const [order, setOrder] = useState();
     const [orderTotal, setOrderTotal] = useState(0);
     const { user } = useContext(AuthContext);
+    const router = useRouter();
 
     const refreshOrders = (e) => {
         // kept for compatibility: the OrdersMenu will call its own fetch; this handler can be empty
@@ -163,14 +166,15 @@ export default function MyAccount({ childToParent }) {
                                         </div>
                                         <div style={{ position: "absolute", bottom: 0, borderTopStyle: "dashed", borderTopWidth: "1px", }}>
                                             <OrderDetailText>Total: R$ {getOrderTotal(order.line_items)}</OrderDetailText>
-                                            <OrderDetailText style={{ paddingBottom: "30px" }}>
-                                                Data: {format(order.createdAt, 'dd/MM/yyyy')} | Pago: {order.paid ? 'Sim' : 'Não'} | Status: {order?.status === 'delivered' ? 'Entregue' : 'Pendente'}
-                                                <span style={{ marginLeft: 8 }}>
-                                                    <Link href={'/review-order?orderId=' + order._id}>
-                                                        Avaliar
-                                                    </Link>
-                                                </span>
-                                            </OrderDetailText>
+                                        <OrderDetailText style={{ paddingBottom: "30px" }}>
+                                            Data: {format(order.createdAt, 'dd/MM/yyyy')} | Pago: {order.paid ? 'Sim' : 'Não'} | Status: {order?.status === 'delivered' ? 'Entregue' : 'Pendente'}
+                                            <span style={{ marginLeft: 8 }}>
+                                                {/* Use a button to navigate to the review page */}
+                                                <Button black onClick={() => router.push('/review-order?orderId=' + order._id)}>
+                                                    Enviar avaliação
+                                                </Button>
+                                            </span>
+                                        </OrderDetailText>
                                         </div>
                                     </>
                                 )}
