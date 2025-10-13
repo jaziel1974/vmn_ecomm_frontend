@@ -7,6 +7,7 @@ import { useContext, useState } from "react";
 import styled, { css } from "styled-components";
 import { AuthContext } from "./api/auth/auth";
 import Center from "@/components/Center";
+import OrdersMenu from '@/components/OrdersMenu';
 
 const COLORS = {
     primaryDark: "#1B422E",
@@ -21,11 +22,7 @@ const Wrapper = styled.div`
     }
 `;
 
-const Menu = styled.div`
-    width: 100%;
-    display: block;
-    background-color: ${COLORS.primaryLight};
-`;
+// Menu moved to shared component `OrdersMenu`
 
 export const ErrorContent = styled.div`
     width: 100%;
@@ -97,48 +94,7 @@ export const OrderDetailText = styled.div`
     color: ${COLORS.primaryDark};
 `;
 
-const StyledNav = styled.nav`
-    display: block;
-    gap: 15px;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 70px;
-    display: flex;
-    padding: 0;
-    padding-right: 5px;
-    @media screen and (max-width: 768px) {
-        height: 40px;
-    }
-    @media screen and (min-width: 769px) {
-        height: 50px;
-    }
-`;
-
-const NavLink = styled(Link)`
-    display: flex;
-    ${props => props.color === 'grey' && css`
-        color:grey;
-    `}
-    ${props => props.color === 'normal' && css`
-        color:#FEBA51;
-    `}
-    ${props => props.color === 'dark' && css`
-        color:${COLORS.primaryDark};
-    `}
-    padding-top:10px;
-    height: 25px;
-    padding-left: 20px;
-    padding-right: 20px;
-    @media screen and (max-width: 768px) {
-        font-size: 0.8rem;
-    }
-    @media screen and (min-width: 769px) {
-        font-size: 1.2rem;
-        margin-bottom: 20px;
-    }
-`;
+// StyledNav and NavLink moved to `OrdersMenu` shared component
 
 export default function MyAccount({ childToParent }) {
 
@@ -178,13 +134,7 @@ export default function MyAccount({ childToParent }) {
                     <ErrorContent><LabelError>{error}</LabelError></ErrorContent>
                 }
                 <Wrapper>
-                    <Menu>
-                        <StyledNav>
-                            <NavLink color={"dark"} href={'#'} onClick={(e) => refreshOrders(e)}>
-                                Meus pedidos
-                            </NavLink>
-                        </StyledNav>
-                    </Menu>
+                    <OrdersMenu onRefresh={refreshOrders} />
                     <OrderTitleDiv>
                         {orders && orders.map((order) => (
                             <OrderTitleInner>

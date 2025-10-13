@@ -7,6 +7,7 @@ import axios from 'axios';
 import { AuthContext } from './api/auth/auth';
 import StarRating from '@/components/StarRating';
 import styled from 'styled-components';
+import OrdersMenu from '@/components/OrdersMenu';
 
 export default function ReviewOrderPage() {
     const { signed, user } = useContext(AuthContext);
@@ -18,6 +19,16 @@ export default function ReviewOrderPage() {
     const [itemComments, setItemComments] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
+
+    const refreshOrders = (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        const email = user?.email;
+        if (email) {
+            axios.get('/api/orders?email=' + encodeURIComponent(email) + '&limit=3')
+                .then(res => setOrders(res.data || []))
+                .catch(() => setOrders([]));
+        }
+    }
 
     useEffect(() => {
         if (!signed) return;
