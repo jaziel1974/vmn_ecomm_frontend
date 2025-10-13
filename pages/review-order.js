@@ -2,9 +2,11 @@ import Header from '@/components/Header';
 import Center from '@/components/Center';
 import Button from '@/components/Button';
 import { useEffect, useState, useContext } from 'react';
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import { AuthContext } from './api/auth/auth';
 import StarRating from '@/components/StarRating';
+import styled from 'styled-components';
 
 export default function ReviewOrderPage() {
     const { signed, user } = useContext(AuthContext);
@@ -15,17 +17,32 @@ export default function ReviewOrderPage() {
     const [itemRatings, setItemRatings] = useState({});
     const [itemComments, setItemComments] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         if (!signed) return;
         // fetch user's orders by email
         const email = user?.email;
         if (!email) return;
-        axios.get('/api/orders?email=' + encodeURIComponent(email)).then(res => {
+        axios.get('/api/orders?email=' + encodeURIComponent(email) + '&limit=3').then(res => {
             setOrders(res.data || []);
-            console.log(res.data);
         }).catch(() => setOrders([]));
     }, [signed, user?.email]);
+
+    // If the page was opened with ?orderId=..., preselect that order when orders are available
+    useEffect(() => {
+        const queryOrderId = router?.query?.orderId;
+        if (!queryOrderId) return;
+        if (orders && orders.length > 0) {
+            const found = orders.find(o => o._id === queryOrderId);
+            if (found) {
+                setSelectedOrderId(queryOrderId);
+                // remove query param to keep URL clean
+                const { orderId, ...rest } = router.query;
+                router.replace({ pathname: router.pathname, query: rest }, undefined, { shallow: true });
+            }
+        }
+    }, [router, orders]);
 
     useEffect(() => {
         // reset item ratings/comments when order changes and try load existing review
@@ -139,61 +156,142 @@ export default function ReviewOrderPage() {
         <>
             <Header />
             <Center>
-                <div style={{ maxWidth: 900, width: '100%' }}>
-                    <h1>Avaliar Pedido</h1>
+                <Container>
+                    <Card>
+                        <H1>Avaliar Pedido</H1>
 
-                    {!signed && (
-                        <div>Faça login para ver seus pedidos e enviar avaliações.</div>
-                    )}
+                        {!signed && (
+                            <Message>Faça login para ver seus pedidos e enviar avaliações.</Message>
+                        )}
 
-                    {signed && (
-                        <div>
-                            <label>Escolha um pedido</label>
-                            <select value={selectedOrderId} onChange={e => setSelectedOrderId(e.target.value)} style={{ width: '100%', padding: 10, margin: '10px 0' }}>
-                                <option value="">-- selecione --</option>
-                                {orders.map(o => (
-                                    <option key={o._id} value={o._id}>Pedido {o._id} — {o.status || ''}</option>
-                                ))}
-                            </select>
+                        {signed && (
+                            <div>
+                                <Label>Escolha um pedido</Label>
+                                <Select value={selectedOrderId} onChange={e => setSelectedOrderId(e.target.value)}>
+                                    <option value="">-- selecione --</option>
+                                    {orders.map(o => (
+                                        <option key={o._id} value={o._id}>Pedido de {new Date(o.createdAt).toLocaleDateString()}</option>
+                                    ))}
+                                </Select>
 
-                            {selectedOrder && (
-                                <div style={{ marginTop: 20 }}>
-                                    <h3>Avaliação do Pedido</h3>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                        <StarRating value={orderRating} onChange={setOrderRating} />
-                                        <span>{orderRating} / 5</span>
-                                    </div>
-                                    <textarea rows={4} style={{ width: '100%', marginTop: 10 }} placeholder="Comentários sobre o pedido" value={orderComment} onChange={e => setOrderComment(e.target.value)} />
+                                {selectedOrder && (
+                                    <div>
+                                        <SectionTitle>Avaliação do Pedido</SectionTitle>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                            <StarRating value={orderRating} onChange={setOrderRating} />
+                                            <span>{orderRating} / 5</span>
+                                        </div>
+                                        <TextArea rows={4} placeholder="Comentários sobre o pedido" value={orderComment} onChange={e => setOrderComment(e.target.value)} />
 
-                                    <h3 style={{ marginTop: 20 }}>Avaliação dos Itens</h3>
-                                    {selectedOrder.line_items.map((it, id) => {
-                                        return (
-                                            <div key={id} style={{ border: '1px solid #eee', padding: 10, marginBottom: 10 }}>
-                                                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                                                    <img src={it?.image || it.product?.images?.[0]} alt="" style={{ width: 60, height: 60, objectFit: 'cover' }} />
-                                                    <div style={{ flex: 1 }}>
-                                                        <div style={{ fontWeight: 'bold' }}>{it.name}</div>
-                                                        <div style={{ marginTop: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
-                                                            <StarRating value={itemRatings[id] || 0} onChange={(v) => setItemRatings(prev => ({ ...prev, [id]: v }))} />
-                                                            <span>{itemRatings[id] || 0} / 5</span>
+                                        <SectionTitle>Avaliação dos Itens</SectionTitle>
+                                        {selectedOrder.line_items.map((it, id) => {
+                                            return (
+                                                <ItemCard key={id}>
+                                                    <ItemRow>
+                                                        <ProductImage src={it?.image || it.product?.images?.[0]} alt="" />
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{ fontWeight: 'bold' }}>{it.name}</div>
+                                                            <div style={{ marginTop: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                                <StarRating value={itemRatings[id] || 0} onChange={(v) => setItemRatings(prev => ({ ...prev, [id]: v }))} />
+                                                                <span>{itemRatings[id] || 0} / 5</span>
+                                                            </div>
+                                                            <TextArea rows={2} placeholder="Comentário sobre o item" value={itemComments[id] || ''} onChange={e => setItemComments(prev => ({ ...prev, [id]: e.target.value }))} />
                                                         </div>
-                                                        <textarea rows={2} placeholder="Comentário sobre o item" style={{ width: '100%', marginTop: 8 }} value={itemComments[id] || ''} onChange={e => setItemComments(prev => ({ ...prev, [id]: e.target.value }))} />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
+                                                    </ItemRow>
+                                                </ItemCard>
+                                            );
+                                        })}
 
-                                    <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
-                                        <Button black onClick={submitReview} disabled={isSubmitting}>Enviar Avaliação</Button>
-                                        <Button onClick={() => { setSelectedOrderId(''); }}>Cancelar</Button>
+                                        <Actions>
+                                            <Button black onClick={submitReview} disabled={isSubmitting}>Enviar Avaliação</Button>
+                                            <Button onClick={() => { setSelectedOrderId(''); }}>Cancelar</Button>
+                                        </Actions>
                                     </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
+                                )}
+                            </div>
+                        )}
+                    </Card>
+                </Container>
             </Center>
         </>
     );
 }
+
+const Container = styled.div`
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 20px;
+`;
+
+const Card = styled.div`
+    max-width: 900px;
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    @media (max-width: 768px) {
+        padding: 16px;
+        margin: 0 12px;
+    }
+`;
+
+const H1 = styled.h1`
+    margin: 0 0 16px 0;
+`;
+
+const Label = styled.label`
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+`;
+
+const Select = styled.select`
+    width:100%;
+    padding:10px;
+    margin-bottom:16px;
+`;
+
+const SectionTitle = styled.h3`
+    margin-top:18px;
+`;
+
+const TextArea = styled.textarea`
+    width:100%;
+    margin-top:10px;
+    padding:8px;
+    border-radius:6px;
+    border:1px solid #ddd;
+`;
+
+const ItemCard = styled.div`
+    border:1px solid #eee;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:8px;
+`;
+
+const ItemRow = styled.div`
+    display:flex;
+    gap:12px;
+    align-items:center;
+`;
+
+const ProductImage = styled.img`
+    width:60px;
+    height:60px;
+    object-fit:cover;
+    border-radius:6px;
+`;
+
+const Actions = styled.div`
+    display:flex;
+    gap:10px;
+    margin-top:12px;
+    flex-wrap:wrap;
+`;
+
+const Message = styled.div`
+    margin-bottom:12px;
+`;
