@@ -44,12 +44,10 @@ export const OrderTitleDiv = styled.div`
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    @media screen and (max-width: 768px) {
-        justify-content: space-evenly;
-    }
-    @media screen and (min-width: 769px) {
-        justify-content: space-between;
-    }
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 10px 0;
 `;
 
 export const OrderDetailDiv = styled.div`
@@ -81,12 +79,25 @@ export const OrderTitleInner = styled.div`
     margin: 10px;
     padding: 5px;
     width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 `;
 
 export const OrderDetailText = styled.div`
     font-weight: bold;
     font-size: 0.8rem;
     color: ${COLORS.primaryDark};
+`;
+
+export const ButtonRow = styled.div`
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 // StyledNav and NavLink moved to `OrdersMenu` shared component
@@ -164,18 +175,17 @@ export default function MyAccount({ childToParent }) {
                                                 </tbody>
                                             </Table>
                                         </div>
-                                        <div style={{ position: "absolute", bottom: 0, borderTopStyle: "dashed", borderTopWidth: "1px", }}>
+                                        <div style={{ position: "absolute", bottom: 70, left: 0, right: 0, borderTopStyle: "dashed", borderTopWidth: "1px", }}>
                                             <OrderDetailText>Total: R$ {getOrderTotal(order.line_items)}</OrderDetailText>
-                                        <OrderDetailText style={{ paddingBottom: "30px" }}>
-                                            Data: {format(order.createdAt, 'dd/MM/yyyy')} | Pago: {order.paid ? 'Sim' : 'Não'} | Status: {order?.status === 'delivered' ? 'Entregue' : 'Pendente'}
-                                            <span style={{ marginLeft: 8 }}>
-                                                {/* Use a button to navigate to the review page */}
-                                                <Button black onClick={() => router.push('/review-order?orderId=' + order._id)}>
-                                                    Enviar avaliação
-                                                </Button>
-                                            </span>
-                                        </OrderDetailText>
+                                            <OrderDetailText style={{ paddingTop: 6 }}>
+                                                Data: {format(order.createdAt, 'dd/MM/yyyy')} | Pago: {order.paid ? 'Sim' : 'Não'} | Status: {order?.status === 'delivered' ? 'Entregue' : 'Pendente'}
+                                            </OrderDetailText>
                                         </div>
+                                        <ButtonRow>
+                                            <Button black onClick={() => router.push('/review-order?orderId=' + order._id)}>
+                                                Avaliar pedido
+                                            </Button>
+                                        </ButtonRow>
                                     </>
                                 )}
                             </OrderTitleInner>
